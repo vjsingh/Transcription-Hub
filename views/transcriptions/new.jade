@@ -1,0 +1,7 @@
+.page
+  h2 New Transcription
+  p
+    a.button(href='/transcriptions') &larr; All Transcriptions
+  form(method='post', action='/transcriptions.json')
+    !=partial('fields', { locals: { t: t } })
+

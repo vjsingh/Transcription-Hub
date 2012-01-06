@@ -1,0 +1,13 @@
+h2 Bounty
+.container
+  p iosdjoiasdj
+  a.btn.primary(type='submit', href='/newBounty') New Bounty
+  - for (var bI in bounties)
+    - b = bounties[bI]
+    =b
+
+!= partial('transcriptions', {locals: {
+  user: user,
+  transcriptions: transcriptions,
+  type: type
+}})

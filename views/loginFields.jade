@@ -1,0 +1,19 @@
+//
+  input.required(id='username', name='user[username]', value='Username', minlength='1', data-original-title='Username Required', rel='popover')
+
+  input.required(id='password-password', name='user[password]', value='', type='password', minlength='5', rel='popover', data-content='Minimum 5 characters', data-original-title='Invalid Password')
+
+//.clearfix
+input(id='username', name='user[username]', type='text', placeholder='Username')//remote='/checkUsername/')
+
+//.clearfix
+input.required(id='password', name='user[password]', placeholder='Password', type='password')
+
+input#loginSubmit(type='submit', value='Upload')
+
+//
+  input.required(id='username', name='user[email]', value='Username', minlength='1')
+
+  input(id='password-clear', name='user[password]', value='Password', type='text')
+  input.required(id='password-password', name='user[password]', value='', type='password', minlength='5')
+  input#loginSubmit(type='submit', value='Upload')

@@ -1,0 +1,93 @@
+!!! 5
+//if lt IE 7
+  <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en">
+//if IE 7
+  <html class="no-js lt-ie9 lt-ie8" lang="en">
+//if IE 8
+  <html class="no-js lt-ie9" lang="en">
+//[if gt IE 8]><!
+html(class='no-js', lang='en')
+  //<![endif]
+  head
+    meta(charset='utf-8')
+    meta(http-equiv='X-UA-Compatible', content='IE=edge,chrome=1')
+
+    title= 'Transcription Hub'
+    meta(name='description', content='')
+    meta(name='author', content='')
+
+    // Bootstrap: Le HTML5 shim, for IE6-8 support of HTML elements
+    //[if lt IE 9]
+      script(src="http://html5shim.googlecode.com/svn/trunk/html5.js")
+    //<![endif]
+
+    style
+      body {
+        padding-top: 60px;
+      }
+
+    <!-- Le fav and touch icons -->
+    <link rel="shortcut icon" href="images/favicon.ico">
+    <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="images/apple-touch-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="images/apple-touch-icon-114x114.png">
+
+    //script(src='js/libs/modernizr-2.0.6.min.js')
+
+
+    //link(rel='stylesheet', href='/stylesheets/style.css')
+    //link(rel='stylesheet', href='/stylesheets/aristo/jquery-ui-1.8.5.custom.css')
+    //script(type='text/javascript', src='/javascripts/json.js')
+    script(src='//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js')
+    script(src='/jquery.js')
+    //script window.jQuery || document.write('<script src="js/libs/jquery-1.7.1.min.js"><\\/script>')
+    //script(type='text/javascript', src='https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.7/jquery-ui.min.js')
+    //script(type='text/javascript', src='/javascripts/underscore-min.js')
+    //script(type='text/javascript', src='/javascripts/backbone-min.js')
+    link(rel='stylesheet/less', href='/stylesheets/bootstrap.less')
+    //link(rel='stylesheet', href='/stylesheets/bootstrap.css')
+    script(src='/stylesheets/less-1.1.5.min.js')
+    script(type="text/javascript", src="/javascripts/bootstrap-twipsy.js")
+    script(type="text/javascript", src="/javascripts/bootstrap-popover.js")
+    script(type="text/javascript", src="http://jzaefferer.github.com/jquery-validation/jquery.validate.js")
+    script(type="text/javascript", src="/javascripts/validate.js")
+    script(type='text/javascript', src='/javascripts/myUtil.js')
+
+  - if (typeof(user) !== 'undefined' && user && user.username)
+    - userLoggedIn = true
+  - else
+    - userLoggedIn = false
+  body#entire-page
+    .topbar
+      .topbar-inner
+        .container-fluid
+          a.brand(href='/') Transcription Hub
+          ul.nav
+            li
+              a(href='/about') About
+            - if (userLoggedIn)
+              li
+                a(href='/Upload') Upload
+              li
+                a(href='/Bounty') Bounty
+            - else
+              li
+                a(href='/register') Register
+          //a.button.btn.primary.pull-left(href="/upload") Upload
+          //a.button.btn.primary.pull-left(href="/register") Register
+          form.pull-left(method='post', action='/search')
+            input(type='text', name='searchAll', placeholder='Enter Artist/Song/Album')
+          .pull-right
+            - if (userLoggedIn)
+              li.right
+                | Logged in as:
+                a#profile(href='/profile')
+                  = user.username
+                a#logout(href='/logout') Log Out
+            - else
+              script(type='text/javascript', src='/javascripts/login.js')
+              form#loginTopBar(method='post', action'=/login')
+                != partial('loginFields', {locals: {user: user}})
+    != body
+    footer
+      &copy; Varun Singh 2011

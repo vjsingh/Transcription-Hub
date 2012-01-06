@@ -1,0 +1,43 @@
+script(type='text/javascript', src='/javascripts/forms.js')
+
+h2 Register
+
+form#register.users(method='post', action='/register')
+  fieldset
+      legend Enter your details to create an account
+      .clearfix
+        label(for='username') Username
+        .input
+          input.xlarge.required(id='regUsername', name='user[username]', type='text', placeholder='Username', minlength='3', 'loginRegex'=true, remote='/checkUsername/')
+          span.help-block No spaces or punctuation, only letters and numbers
+      .clearfix
+        label(for='email') Email
+        .input
+          input.xlarge.required(id='email', name='user[email]', type='email', placeholder='Enter your email address')
+          span.help-block We'll send you an email to confirm this!
+      .clearfix
+        label(for='password') Password
+        .input
+          input.xlarge.required(id='regPassword', name='user[password]', placeholder='Choose a password', type='password', minlength='5')
+      .clearfix
+        label(for='password2') Confirm
+        .input
+          input.xlarge.required(id='password2', name='password2', placeholder='Confirm Password', type='password', equalTo='#regPassword')
+      .actions
+        input.btn.primary(type='submit', value='Create Account')
+        button.btn(type='reset') Cancel
+
+//
+  script(type='text/javascript')
+    $('#login').validate({
+      highlight: function(element, errClass) {
+        $(element).popover('show');
+      },
+      unhighlight: function(element, errClass) {
+        $(element).popover('hide');
+      },
+      errorPlacement: function(err, element) {
+        err.hide();
+      }
+    }).form();
+

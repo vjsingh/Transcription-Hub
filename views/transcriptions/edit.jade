@@ -1,0 +1,9 @@
+h2 Edit Transcription
+p
+  a.button(href='/transcription')
+    &larr; All Transcriptions
+form(method='post', action='/transcriptions/' + t.id)
+  input(name='t[id]', value=t.id, type='hidden')
+  input(name='_method', value='PUT', type='hidden')
+  !=partial('fields', { locals: { t: t } })
+

@@ -1,0 +1,41 @@
+script(type='text/javascript', src='/javascripts/forms.js')
+
+h2 New Bounty
+
+form#newBounty(method='post', action='/newBounty')
+  fieldset
+      legend Submit a new Transcription request
+      .clearfix
+        label(for='title') Title
+        .input
+          input.xlarge.required(id='nbountyTitle', name='bounty[title]', type='text', placeholder='Title', minlength='3')
+      .clearfix
+        label(for='Artist') Artist
+        .input
+          input.xlarge.required(id='nbountyArtist', name='bounty[artist]', type='text', placeholder='Artist')
+      .clearfix
+        label(for='Album') Album
+        .input
+          input.xlarge.required(id='nbountyAlbum', name='bounty[album]', type='text', placeholder='Album')
+      .clearfix
+        label(for='points') Karma Points
+        .input
+          input.xlarge.required(id='nbountyPoints', name='bounty[points]', placeholder='Points to add to bounty', type='number', min=1)
+      .actions
+        input.btn.primary(type='submit', value='Submit')
+        button.btn(type='reset') Cancel
+
+//
+  script(type='text/javascript')
+    $('#login').validate({
+      highlight: function(element, errClass) {
+        $(element).popover('show');
+      },
+      unhighlight: function(element, errClass) {
+        $(element).popover('hide');
+      },
+      errorPlacement: function(err, element) {
+        err.hide();
+      }
+    }).form();
+

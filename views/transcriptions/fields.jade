@@ -1,0 +1,9 @@
+div
+  label Title:
+  input(name='transcription[title]', value=t.title || '')
+div
+  label Note:
+  div
+    textarea(name='transcription[data]')= t.data
+div
+  input(type='submit', value='Save')

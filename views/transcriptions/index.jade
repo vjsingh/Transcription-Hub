@@ -1,0 +1,34 @@
+#left.outline-view
+  #TranscriptionTitles
+    ul#transcription-list
+      li#transcription-row-template(style='display: none')
+        a(id='transcription_{{ id }}') {{ title }}
+      ul
+        - for (var t in transcriptions)
+          li
+            a.button(href='/transcriptions/' + transcriptions[t].id + '/edit')= transcriptions[t].title
+            a(href='/transcriptions' + transcriptions[t].id)= transcriptions[t].title
+
+  ul.toolbar
+    li
+      a#create-transcription(href='/transcriptions/new')
+        +
+    li
+      a#delete-transcription(href='#')
+        -
+
+.content-divider
+
+.content
+  #html-container(style='display: none')
+  #editor-container
+    div.title
+      input.title(name='t[title]')= t.title
+    textarea#editor(name='t[data]')
+
+ul#controls.toolbar
+  li
+    a#save-button(href='#') Save
+  li
+    a#html-button(href='#') HTML
+

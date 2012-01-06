@@ -1,0 +1,27 @@
+{
+  "name": "transcription-hub",
+  "description": "One stop place for all jazz solo transcriptions",
+  "version": "0.0.1",
+  "author": "Varun Singh <Varun_Singh@brown.edu>",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "engines": [
+    "node"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/mape/node-express-boilerplate"
+  },
+  "dependencies": {
+    "expresso": "0.9.x",
+    "formaline": "0.6.x",
+    "less": "1.1.x",
+    "mongoose": "2.4.x",
+    "stylus": "0.21.x",
+    "jade": "0.20.x",
+    "connect-mongodb": "1.1.x",
+    "jslint": "0.1.x",
+    "express": "2.5.x"
+  }
+}

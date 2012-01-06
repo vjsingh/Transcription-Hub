@@ -1,0 +1,36 @@
+// Validate
+script(type='text/javascript', src='/javascripts/forms.js')
+
+h2 Upload
+
+form#uploadForm(method='post', enctype="multipart/form-data", action='/transcriptions.json')
+  fieldset
+    legend Upload a transcription
+    .clearfix
+      label(for='title') Title
+      .input
+        input#uploadTitle.required(name='transcription[title]', value='', type='text', minlength='3')
+    .clearfix
+      label Artist
+      .input
+        input.required(name='transcription[artist]', value='', type='text',  minlength='3')
+    .clearfix
+      label Album
+      .input
+        input(name='transcription[album]', value='', type='text')
+    .clearfix
+      label Description
+      .input
+       textarea(name='transcription[description]')=''
+    .clearfix
+      label File (PDF)
+      .input
+        input.required(type='file', name='transcription[file]', accept='pdf')
+    #uploadDisclaimer
+      | By Uploading, you agree to our
+      a(href='/about') terms and conditions
+
+    .actions
+      input.btn.primary(type='submit', value='Upload')
+      button.btn(type='reset') Cancel
+
