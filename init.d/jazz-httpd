@@ -80,7 +80,7 @@ do_start() {
                       --stdout=$LOGDIR/$NAME.log \
                       --stderr=$LOGDIR/$NAME.log \
                       --errlog=$LOGDIR/$NAME.err \
-                      --"node $SERVER_FILE"
+                      "node $SERVER_FILE"
                       #-- "$MOVE_PROGRAM" $MOVE_ARGS
     STATUS="$?"
   else
