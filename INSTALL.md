@@ -1,6 +1,6 @@
 # Setup and installation
 
-First of all, make a clone or [fork of this repository](http://help.github.com/fork-a-repo/) and replace all occurrences of `myapp` with a name of your choice.
+First of all, make a clone or [fork of this repository](http://help.github.com/fork-a-repo/) and replace all occurrences of `jazz` with a name of your choice.
 
 ## Launch an EC2 instance
 
@@ -13,11 +13,11 @@ First of all, make a clone or [fork of this repository](http://help.github.com/f
 
 > These AMIs where taken from <http://uec-images.ubuntu.com/releases/10.10/release/>
 
-Go with the defaults in the "wizard" presented. Chose to create a new key pair when asked and **be sure to make a secure backup of the private key** that you will download. A good place to put your private key is in `~/.ssh/myapp.pem` and then `chmod 0600 ~/.ssh/myapp.pem` so no one else can read it but you.
+Go with the defaults in the "wizard" presented. Chose to create a new key pair when asked and **be sure to make a secure backup of the private key** that you will download. A good place to put your private key is in `~/.ssh/jazz.pem` and then `chmod 0600 ~/.ssh/jazz.pem` so no one else can read it but you.
 
 When the instance is green and "started", log in to the machine:
 
-    ssh -i ~/.ssh/myapp.pem ubuntu@XXX.amazonaws.com
+    ssh -i ~/.ssh/jazz.pem ubuntu@XXX.amazonaws.com
 
 *Note: Replace `XXX.amazonaws.com` with the hostname or address of your instance.*
 
@@ -49,49 +49,49 @@ NPM:
 
 ## Checkout your source
 
-    sudo mkdir /var/myapp
-    sudo chown www-data:www-data /var/myapp
+    sudo mkdir /var/jazz
+    sudo chown www-data:www-data /var/jazz
 
 If your git repository is public (i.e. viewable by anyone):
 
-    sudo -Hu www-data git clone https://github.com/you/myapp.git /var/myapp
+    sudo -Hu www-data git clone https://github.com/you/jazz.git /var/jazz
 
 If your git repository is private:
 
     sudo -Hu www-data ssh-keygen -t rsa  # chose "no passphrase"
     sudo cat /var/www/.ssh/id_rsa.pub
-    # Add the key as a "deploy key" at https://github.com/you/myapp/admin
-    sudo -Hu www-data git clone git@github.com:you/myapp.git /var/myapp
+    # Add the key as a "deploy key" at https://github.com/you/jazz/admin
+    sudo -Hu www-data git clone git@github.com:you/jazz.git /var/jazz
 
 
 ## Configure & start your services
 
 Your Node.js web server:
 
-    sudo ln -s /var/myapp/init.d/myapp-httpd /etc/init.d/
-    sudo update-rc.d myapp-httpd defaults
-    sudo invoke-rc.d myapp-httpd start
-    
-Optional `myapp-processor`:
-    
-    sudo ln -s /var/myapp/init.d/myapp-processor /etc/init.d/
-    sudo update-rc.d myapp-processor defaults
-    sudo invoke-rc.d myapp-processor start
+    sudo ln -s /var/jazz/init.d/jazz-httpd /etc/init.d/
+    sudo update-rc.d jazz-httpd defaults
+    sudo invoke-rc.d jazz-httpd start
+
+Optional `jazz-processor`:
+
+    sudo ln -s /var/jazz/init.d/jazz-processor /etc/init.d/
+    sudo update-rc.d jazz-processor defaults
+    sudo invoke-rc.d jazz-processor start
 
 
 ## Configure Nginx
 
 There are three different kinds of setups to chose from:
 
-1. `myapp-http` -- HTTP only
-2. `myapp-https` -- HTTPS with HTTP redirecting to HTTPS
-3. `myapp-https-http` -- HTTPS and HTTP
+1. `jazz-http` -- HTTP only
+2. `jazz-https` -- HTTPS with HTTP redirecting to HTTPS
+3. `jazz-https-http` -- HTTPS and HTTP
 
-If you are using HTTPS, make sure you have added your SSL certificate and key at `/var/myapp/ssl/ssl.crt` and `/var/myapp/ssl/ssl.key`.
+If you are using HTTPS, make sure you have added your SSL certificate and key at `/var/jazz/ssl/ssl.crt` and `/var/jazz/ssl/ssl.key`.
 
-Replace `myapp-https` below with the configuration of your choice:
+Replace `jazz-https` below with the configuration of your choice:
 
-    sudo ln -sf /var/myapp/etc/nginx/sites-available/myapp-https \
+    sudo ln -sf /var/jazz/etc/nginx/sites-available/jazz-https \
                 /etc/nginx/sites-enabled/default
     sudo invoke-rc.d nginx restart
 
@@ -100,6 +100,6 @@ Replace `myapp-https` below with the configuration of your choice:
 
 Your web app should now be operational.
 
-Note that the programs `myapp-httpd` and `myapp-processor` are written in the Move programming language (like JavaScript but simpler). [Learn more at movelang.org](http://movelang.org/).
+Note that the programs `jazz-httpd` and `jazz-processor` are written in the Move programming language (like JavaScript but simpler). [Learn more at movelang.org](http://movelang.org/).
 
 If everything works, **continue by reading [WORKFLOW.md](https://github.com/rsms/ec2-webapp/blob/master/WORKFLOW.md#readme)**

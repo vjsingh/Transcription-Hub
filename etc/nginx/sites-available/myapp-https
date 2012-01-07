@@ -3,8 +3,8 @@ server {
   listen                443;
   listen                [::]:443 default ssl ipv6only=on;
   ssl                   on;
-  ssl_certificate       /var/myapp/ssl/ssl.crt;
-  ssl_certificate_key   /var/myapp/ssl/ssl.key;
+  ssl_certificate       /var/jazz/ssl/ssl.crt;
+  ssl_certificate_key   /var/jazz/ssl/ssl.key;
   ssl_protocols         SSLv3 TLSv1;
   ssl_ciphers           RC4:ALL:-LOW:-EXPORT:!ADH:!MD5;
   ssl_prefer_server_ciphers on;
@@ -12,7 +12,7 @@ server {
   ssl_session_timeout   10m;
   access_log            /var/log/nginx/access.log;
   location / {
-    root        /var/myapp/www;
+    root        /var/jazz/www;
     index       index.html;
     error_page  404 = @backend;
   }

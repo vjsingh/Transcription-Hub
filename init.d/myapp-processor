@@ -1,26 +1,26 @@
 #!/bin/sh
 ### BEGIN INIT INFO
-# Provides:          myapp-processor
+# Provides:          jazz-processor
 # Required-Start:    $remote_fs
 # Required-Stop:     $remote_fs
 # Default-Start:     2 3 4 5
 # Default-Stop:      0 1 6
-# Short-Description: myapp processor
-# Description:       myapp processor
+# Short-Description: jazz processor
+# Description:       jazz processor
 ### END INIT INFO
 #
 # Installation:
 #   1. Put a copy of or make a symlink to this script in /etc/init.d
-#   2. update-rc.d myapp-processor defaults
+#   2. update-rc.d jazz-processor defaults
 #
 # Do NOT "set -e"
 
 # PATH should only include /usr/* if it runs after the mountnfs.sh script
 PATH=/sbin:/usr/sbin:/bin:/usr/bin:/usr/local/bin
-NAME=myapp-processor
-DESC="myapp description here"
-RUNDIR=/var/run/myapp
-LOGDIR=/var/log/myapp
+NAME=jazz-processor
+DESC="jazz description here"
+RUNDIR=/var/run/jazz
+LOGDIR=/var/log/jazz
 SCRIPTNAME=/etc/init.d/$NAME
 USER=www-data
 GROUP=www-data
@@ -28,7 +28,7 @@ GROUP=www-data
 
 # Node.js Move
 MOVE_PROGRAM=/usr/local/bin/move
-MOVE_SCRIPT=/var/myapp/bin/myapp-processor.mv
+MOVE_SCRIPT=/var/jazz/bin/jazz-processor.mv
 MOVE_ARGS="$MOVE_PROGRAM"
 
 # Daemon supervisor config
