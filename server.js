@@ -143,6 +143,7 @@ function checkUser(req, res, next) {
 // Routes
 
 app.get('/', function(req, res) {
+  console.log("AAA");
   Transcription.find(function(err, transcriptions) {
     transcriptions = transcriptions.map(function(t) {
         var tData = t._doc;
@@ -394,7 +395,7 @@ app.get('/transcriptions.:format?', member, function(req, res) {
 
 // Create
 app.post('/transcriptions.:format?', member, function(req, res) {
-console.log("AAA");
+  console.log("AAA");
   var transcription = new Transcription(req.body.transcription);
   var file = req.files.transcription.file;
   if (path.extname(file.name) !== '.pdf') {
