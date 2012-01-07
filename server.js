@@ -10,6 +10,7 @@ var express = require('express'),
   stylus = require('stylus'),
   siteConf = require('./lib/getConfig'),
   fs = require('fs'),
+  path = require('path'),
   db,
   Transcription, User, LoginToken, Bounty;
   //routes = require('./routes')
@@ -71,8 +72,9 @@ app.configure('test', function() {
 
 // Error
 app.error(function(err, req, res, next) {
-  res.write('a');
-  res.end();
+  res.render('500.jade', {
+    error: err
+  });
 });
 
 models.defineModels(mongoose, function() {
@@ -394,12 +396,25 @@ app.get('/transcriptions.:format?', member, function(req, res) {
 app.post('/transcriptions.:format?', member, function(req, res) {
   var transcription = new Transcription(req.body.transcription);
   var file = req.files.transcription.file;
-  var newFileLoc = './transcriptions/' + file.name;
-  transcription.fileLocation = newFileLoc;
+  if (path.extname(file) !== '.pdf') {
+    throw new Error('Only pdf documents are allowed');
+  }
+  var newFileLoc = '/mongodb/transcriptions/' + file.name;
+  newFileLoc = path.basename(newFileLoc, '.pdf');
+  var addition = 2;
+  while (path.exists(newFileLoc + '.pdf')) {
+    newFileLoc = newFileLoc + addition;
+    addition += 1;
+  }
+  newFileLoc = newFileLoc + '.pdf';
   fs.rename(
     file.path,
     newFileLoc,
     function(err) {
+      if (err) {
+        throw new Error(err);
+      }
+      transcription.fileLocation = newFileLoc;
       transcription.save(function() {
         res.redirect('/upload2');
       });
