@@ -395,7 +395,7 @@ app.get('/transcriptions.:format?', member, function(req, res) {
 
 // Create
 app.post('/transcriptions.:format?', member, function(req, res) {
-  console.log("AAA");
+  console.log("aAAA");
   var transcription = new Transcription(req.body.transcription);
   var file = req.files.transcription.file;
   if (path.extname(file.name) !== '.pdf') {
