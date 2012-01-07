@@ -27,9 +27,10 @@ GROUP=www-data
 #RELOAD_SIGNAL=1
 
 # Node.js
-MOVE_PROGRAM=/usr/local/bin/move
-MOVE_SCRIPT=/var/jazz/bin/jazz-httpd.mv
-MOVE_ARGS="$MOVE_PROGRAM"
+#MOVE_PROGRAM=/usr/local/bin/move
+#MOVE_SCRIPT=/var/jazz/bin/jazz-httpd.mv
+SERVER_FILE=/var/jazz/server.js
+#MOVE_ARGS="$MOVE_PROGRAM"
 
 # Daemon supervisor config
 SUPERVISOR=/usr/bin/daemon
@@ -40,7 +41,7 @@ PIDFILE="$SUPERVISOR_PIDDIR/$NAME.pid"
 # ----- end of configuration -----
 
 # Exit if the package is not available
-test -f "$MOVE_SCRIPT" || exit 0
+test -f "$SERVER_FILE" || exit 0
 
 # Read configuration variable file if it is present
 [ -r /etc/default/$NAME ] && . /etc/default/$NAME
