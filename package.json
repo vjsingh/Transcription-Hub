@@ -15,7 +15,6 @@
   },
   "dependencies": {
     "expresso": "0.9.x",
-    "formaline": "0.6.x",
     "less": "1.1.x",
     "mongoose": "2.4.x",
     "stylus": "0.21.x",
