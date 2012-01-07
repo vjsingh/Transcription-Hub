@@ -40,6 +40,9 @@ $(function () {
               'user[username]': {
                 remote: "Username Taken"
               },
+              'user[email]': {
+                remote: "Email Already Registered!"
+              },
               password2: {
                 required: "Repeat your password",
                 equalTo: "Passwords don't match!"

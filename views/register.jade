@@ -13,7 +13,7 @@ form#register.users(method='post', action='/register')
       .clearfix
         label(for='email') Email
         .input
-          input.xlarge.required(id='email', name='user[email]', type='email', placeholder='Enter your email address')
+          input.xlarge.required(id='email', name='user[email]', type='email', placeholder='Enter your email address', remote='/checkEmail/')
           span.help-block We'll send you an email to confirm this!
       .clearfix
         label(for='password') Password

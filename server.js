@@ -238,28 +238,38 @@ app.post('/register', function(req, res) {
 });
 
 // Check Registration Duplicate
-app.get('/checkUsername/', function(req, res) {
-  if (!req.query || !req.query.user || !req.query.user.username) {
-    res.write('true');
-    res.end();
-  } else {
-    var username = req.query.user.username;
-    if (!username.length || username.length < 3) {
+(function() {
+  function checkField(fieldName, req, res) {
+    if (!req.query || !req.query.user || !req.query.user[fieldName]) {
       res.write('true');
       res.end();
     } else {
-      User.findOne({ username: username}, function(err, user) {
-        if (err || user) {
-          res.write('false');
-          res.end();
-        } else {
-          res.write('true');
-          res.end();
-        }
-      });
+      var field = req.query.user[fieldName];
+      if (!field.length || field.length < 3) {
+        res.write('true');
+        res.end();
+      } else {
+        var searchObj = {};
+        searchObj[fieldName] = field;
+        User.findOne(searchObj, function(err, user) {
+          if (err || user) {
+            res.write('false');
+            res.end();
+          } else {
+            res.write('true');
+            res.end();
+          }
+        });
+      }
     }
   }
-});
+  app.get('/checkUsername/', function(req, res) {
+    checkField('username', req, res);
+  });
+  app.get('/checkEmail/', function(req, res) {
+    checkField('email', req, res);
+  });
+})();
 
 // Sessions
 app.get('/login', function(req, res) {
