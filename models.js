@@ -33,7 +33,7 @@ function defineModels(mongoose, fn) {
   User = new Schema({
     'username': { type: String, validate: [validatePresenceOf, 'a username is required'], index: { unique: true } },
     'email': { type: String, validate: [validatePresenceOf, 'an email is required'], index: { unique: true } },
-    'profPicLoc': {type: String, index: { unique: true}},
+    //'profPicLoc': {type: String}, //index: { unique: true}},
     'karmaPoints': {type: Number},
     'personalWebsite': {type: String},
     'hashed_password': String,

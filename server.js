@@ -207,6 +207,8 @@ app.get('/register', function(req, res) {
 
 app.post('/register', function(req, res) {
   var user = new User(req.body.user);
+  console.log(user);
+  console.log(User);
 
   function userSaveFailed() {
     req.flash('error', 'Account creation failed');
@@ -216,7 +218,9 @@ app.post('/register', function(req, res) {
   }
 
   user.save(function(err) {
+    console.log("SAVING", err);
     if (err) return userSaveFailed();
+    console.log("GOT HERE");
 
     req.flash('info', 'Your account has been created');
     //emails.sendWelcome(user);
