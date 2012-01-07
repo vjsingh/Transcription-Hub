@@ -59,7 +59,7 @@ mkdir -p $RUNDIR > /dev/null 2> /dev/null
 chown -R $USER:$GROUP $RUNDIR
 chmod 0750 $RUNDIR
 mkdir -p $LOGDIR > /dev/null 2> /dev/null
-chown -R ubuntu:ubuntu $LOGDIR
+chown -R $USER:$GROUP $LOGDIR
 chmod 0750 $LOGDIR
 
 VERBOSE=yes
