@@ -143,7 +143,6 @@ function checkUser(req, res, next) {
 // Routes
 
 app.get('/', function(req, res) {
-  console.log("AAA");
   Transcription.find(function(err, transcriptions) {
     transcriptions = transcriptions.map(function(t) {
         var tData = t._doc;
@@ -401,7 +400,7 @@ app.post('/transcriptions.:format?', member, function(req, res) {
   if (path.extname(file.name) !== '.pdf') {
     throw new Error('Only pdf documents are allowed');
   }
-  console.log("AAA");
+  console.log("sAAA");
   var newFileLoc = '/mongodb/transcriptions/' + file.name;
   newFileLoc = path.basename(newFileLoc, '.pdf');
   var addition = 2;
@@ -409,7 +408,7 @@ app.post('/transcriptions.:format?', member, function(req, res) {
     newFileLoc = newFileLoc + addition;
     addition += 1;
   }
-console.log("AAA");
+  console.log("AAA");
   newFileLoc = newFileLoc + '.pdf';
   console.log('AA', file.path);
   fs.rename(
