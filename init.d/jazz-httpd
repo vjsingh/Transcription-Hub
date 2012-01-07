@@ -74,7 +74,7 @@ do_start() {
                     --exec $SUPERVISOR --test > /dev/null
   STATUS="$?"
   if [ "$STATUS" = "0" ]; then
-    sudo start-stop-daemon --start --quiet --pidfile $PIDFILE \
+    start-stop-daemon --start --quiet --pidfile $PIDFILE \
                       --exec $SUPERVISOR --chuid $USER:$GROUP -- \
                       $SUPERVISOR_ARGS \
                       --name=$NAME --pidfile=$PIDFILE \

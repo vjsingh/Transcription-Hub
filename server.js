@@ -407,6 +407,7 @@ app.post('/transcriptions.:format?', member, function(req, res) {
     addition += 1;
   }
   newFileLoc = newFileLoc + '.pdf';
+  console.log('AA', file.path);
   fs.rename(
     file.path,
     newFileLoc,
