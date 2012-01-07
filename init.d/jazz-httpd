@@ -29,7 +29,7 @@ GROUP=www-data
 # Node.js
 #MOVE_PROGRAM=/usr/local/bin/move
 #MOVE_SCRIPT=/var/jazz/bin/jazz-httpd.mv
-SERVER_FILE=/var/jazz/server.js
+SERVER_FILE=/var/jazz/dev/app.dev.js
 #MOVE_ARGS="$MOVE_PROGRAM"
 
 # Daemon supervisor config
