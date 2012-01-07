@@ -37,6 +37,9 @@ app.configure(function(){
   app.use(checkUser);
   app.use(app.router);
   app.use(express.static(__dirname + '/public'));
+  app.use(function(req, res, next) {
+    res.render('404');
+  });
 
   app.dynamicHelpers({
     user: function(req, res) {
@@ -201,7 +204,7 @@ app.post('/newBounty', member, function(req, res) {
 });
 
 // Users
-app.get('/profile', function(req, res) {
+app.get('/profile', member, function(req, res) {
   res.render('profile');
 });
 
@@ -213,8 +216,6 @@ app.get('/register', function(req, res) {
 
 app.post('/register', function(req, res) {
   var user = new User(req.body.user);
-  console.log(user);
-  console.log(User);
 
   function userSaveFailed() {
     req.flash('error', 'Account creation failed');
@@ -231,15 +232,8 @@ app.post('/register', function(req, res) {
     req.flash('info', 'Your account has been created');
     //emails.sendWelcome(user);
 
-    switch (req.params.format) {
-      case 'json':
-        res.send(user.toObject());
-      break;
-
-      default:
-        req.session.user_id = user.id;
-        res.redirect('/transcriptions4');
-    }
+    req.session.user_id = user.id;
+    res.redirect('/search');
   });
 });
 
@@ -397,7 +391,7 @@ app.get('/transcriptions.:format?', member, function(req, res) {
 });
 
 // Create
-app.post('/transcriptions.:format?', function(req, res) {
+app.post('/transcriptions.:format?', member, function(req, res) {
   var transcription = new Transcription(req.body.transcription);
   var file = req.files.transcription.file;
   var newFileLoc = './transcriptions/' + file.name;

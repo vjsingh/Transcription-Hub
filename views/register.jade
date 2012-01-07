@@ -27,6 +27,10 @@ form#register.users(method='post', action='/register')
         input.btn.primary(type='submit', value='Create Account')
         button.btn(type='reset') Cancel
 
+-if regFailed
+  .regFailed
+    Registration Failed! Something unexpected went wrong, please contact hello@transcription-hub.com with error code 201
+
 //
   script(type='text/javascript')
     $('#login').validate({
