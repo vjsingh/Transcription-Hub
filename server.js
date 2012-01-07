@@ -20,7 +20,9 @@ app.configure(function(){
   app.set('views', __dirname + '/views');
   app.set('view engine', 'jade');
   app.set('view options', {pretty: true});
+  app.set('db-uri', 'mongodb://transcriptionhub:spam1601@staff.mongohq.com:10093/jazz');
   app.use(express.bodyParser());
+
   app.use(express.cookieParser());
   app.use(express.session({
     store: mongoStore(app.set('db-uri')),
@@ -50,18 +52,18 @@ app.configure('development', function(){
   app.use(express.logger());
   app.use(express.errorHandler({
     dumpExceptions: true, showStack: true }));
-  app.set('db-uri', 'mongodb://localhost/jazz-dev');
+  //app.set('db-uri', 'mongodb://localhost/jazz-dev');
 });
 
 app.configure('production', function(){
   app.use(express.logger());
   app.use(express.errorHandler());
-  app.set('db-uri', 'mongodb://localhost/jazz-prod');
+  //app.set('db-uri', 'mongodb://localhost/jazz-prod');
 });
 
 app.configure('test', function() {
   app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
-  app.set('db-uri', 'mongodb://localhost/jazz-test');
+  //app.set('db-uri', 'mongodb://localhost/jazz-test');
 });
 
 models.defineModels(mongoose, function() {

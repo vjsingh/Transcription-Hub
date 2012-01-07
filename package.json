@@ -4,7 +4,7 @@
   "version": "0.0.1",
   "author": "Varun Singh <Varun_Singh@brown.edu>",
   "scripts": {
-    "start": "node app.js"
+    "start": "node server.js"
   },
   "engines": [
     "node"
