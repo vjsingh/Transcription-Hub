@@ -369,7 +369,7 @@ app.get('/transcriptions', member, function(req, res) {
   */
 });
 
-app.listen(13458);
+app.listen(80);
 console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
 
 // CRUD for transcriptions
