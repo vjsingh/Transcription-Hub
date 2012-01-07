@@ -396,7 +396,7 @@ app.get('/transcriptions.:format?', member, function(req, res) {
 app.post('/transcriptions.:format?', member, function(req, res) {
   var transcription = new Transcription(req.body.transcription);
   var file = req.files.transcription.file;
-  if (path.extname(file) !== '.pdf') {
+  if (path.extname(file.name) !== '.pdf') {
     throw new Error('Only pdf documents are allowed');
   }
   var newFileLoc = '/mongodb/transcriptions/' + file.name;
