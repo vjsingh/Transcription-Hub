@@ -20,7 +20,7 @@ PATH=/sbin:/usr/sbin:/bin:/usr/bin:/usr/local/bin
 NAME=jazz-httpd
 DESC="jazz HTTP server"
 RUNDIR=/var/run/jazz
-LOGDIR=/var/log/jazz
+LOGDIR='~/log/'
 SCRIPTNAME=/etc/init.d/$NAME
 USER=www-data
 GROUP=www-data
@@ -78,7 +78,7 @@ do_start() {
                       --exec $SUPERVISOR --chuid $USER:$GROUP -- \
                       $SUPERVISOR_ARGS \
                       --name=$NAME --pidfile=$PIDFILE \
-                      --stdout=$LOGDIR/$NAME.log \
+                      --stdout=$LOGDIR/$NAME.out \
                       --stderr=$LOGDIR/$NAME.log \
                       --errlog=$LOGDIR/$NAME.err \
                       -- "node" $SERVER_FILE
