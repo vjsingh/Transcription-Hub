@@ -74,14 +74,14 @@ do_start() {
                     --exec $SUPERVISOR --test > /dev/null
   STATUS="$?"
   if [ "$STATUS" = "0" ]; then
-    start-stop-daemon --start --quiet --pidfile $PIDFILE \
+    sudo start-stop-daemon --start --quiet --pidfile $PIDFILE \
                       --exec $SUPERVISOR --chuid $USER:$GROUP -- \
                       $SUPERVISOR_ARGS \
                       --name=$NAME --pidfile=$PIDFILE \
                       --stdout=$LOGDIR/$NAME.log \
                       --stderr=$LOGDIR/$NAME.log \
                       --errlog=$LOGDIR/$NAME.err \
-                      -- "sudo node" $SERVER_FILE
+                      -- "node" $SERVER_FILE
                       #-- "$MOVE_PROGRAM" $MOVE_ARGS
     STATUS="$?"
   else
