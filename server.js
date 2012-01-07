@@ -22,7 +22,7 @@ app.configure(function(){
   app.set('view engine', 'jade');
   app.set('view options', {pretty: true});
   //app.set('db-uri', 'mongodb://transcriptionhub:spam1601@staff.mongohq.com:10093/jazz');
-  app.use(express.bodyParser());
+  app.use(express.bodyParser({uploadDir: '/~/tmp/transcriptions/'}));
 
   app.use(express.cookieParser());
   app.use(express.session({
