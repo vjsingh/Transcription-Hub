@@ -36,6 +36,10 @@ app.configure(function(){
   app.use(loadUser);
   app.use(checkUser);
   app.use(app.router);
+  app.use(function(req, res, next) {
+    res.write('as');
+    res.end();
+  });
   app.use(express.static(__dirname + '/public'));
 
   app.dynamicHelpers({
@@ -64,6 +68,12 @@ app.configure('production', function(){
 app.configure('test', function() {
   app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
   //app.set('db-uri', 'mongodb://localhost/jazz-test');
+});
+
+// Error
+app.error(function(err, req, res, next) {
+  res.write('a');
+  res.end();
 });
 
 models.defineModels(mongoose, function() {
@@ -369,7 +379,7 @@ app.get('/transcriptions', member, function(req, res) {
   */
 });
 
-app.listen(3000, '127.0.0.1');
+app.listen(3000);
 console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
 
 // CRUD for transcriptions
