@@ -36,10 +36,6 @@ app.configure(function(){
   app.use(loadUser);
   app.use(checkUser);
   app.use(app.router);
-  app.use(function(req, res, next) {
-    res.write('as');
-    res.end();
-  });
   app.use(express.static(__dirname + '/public'));
 
   app.dynamicHelpers({
