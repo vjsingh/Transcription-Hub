@@ -394,11 +394,13 @@ app.get('/transcriptions.:format?', member, function(req, res) {
 
 // Create
 app.post('/transcriptions.:format?', member, function(req, res) {
+console.log("AAA");
   var transcription = new Transcription(req.body.transcription);
   var file = req.files.transcription.file;
   if (path.extname(file.name) !== '.pdf') {
     throw new Error('Only pdf documents are allowed');
   }
+console.log("AAA");
   var newFileLoc = '/mongodb/transcriptions/' + file.name;
   newFileLoc = path.basename(newFileLoc, '.pdf');
   var addition = 2;
@@ -406,6 +408,7 @@ app.post('/transcriptions.:format?', member, function(req, res) {
     newFileLoc = newFileLoc + addition;
     addition += 1;
   }
+console.log("AAA");
   newFileLoc = newFileLoc + '.pdf';
   console.log('AA', file.path);
   fs.rename(
