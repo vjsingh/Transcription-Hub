@@ -27,7 +27,7 @@ app.configure(function(){
   if (IS_LOCAL_MACHINE) {
     fileUploadDir = '/Users/Varun/tmp/transcriptions/';
   } else {
-    fileUploadDir = '/home/ubuntu';
+    fileUploadDir = '/home/ubuntu/tmp/transcriptions/';
   }
   app.use(express.bodyParser({uploadDir: fileUploadDir}));
 
