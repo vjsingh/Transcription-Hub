@@ -430,7 +430,7 @@ app.post('/transcriptions.:format?', member, function(req, res) {
       file.path,
       newFileLoc,
       function(err) {
-        console.log(err);
+        console.log('error', err);
         if (err) {
           throw new Error(err);
         }
