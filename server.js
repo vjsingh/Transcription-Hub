@@ -15,6 +15,10 @@ var express = require('express'),
   Transcription, User, LoginToken, Bounty;
   //routes = require('./routes')
 
+var sys = require('sys');
+var exec = require('child_process').exec;
+function puts(error, stdout, stderr) { sys.puts(stdout) }
+
 // Configuration
 var IS_LOCAL_MACHINE = siteConf.isLocal;
 
@@ -150,6 +154,7 @@ function checkUser(req, res, next) {
 // Routes
 
 app.get('/', function(req, res) {
+  exec("whoami", puts);
   Transcription.find(function(err, transcriptions) {
     transcriptions = transcriptions.map(function(t) {
         var tData = t._doc;
@@ -417,7 +422,7 @@ app.post('/transcriptions.:format?', member, function(req, res) {
   }
   console.log("AAA");
   newFileLoc = newFileLoc + '.pdf';
-  console.log('AA', file.path);
+  console.log('AA', file.path, newFileLoc);
   fs.rename(
     file.path,
     newFileLoc,
