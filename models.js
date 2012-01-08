@@ -15,7 +15,7 @@ function defineModels(mongoose, fn) {
     'description': {type: String},
     'fileLocation': {type: String},
     'upVotes': {type: Number},
-    'userId': {type: ObjectId, index: true, unique:true}
+    'userId': {type: ObjectId, index: true}
   });
 
   Transcription.virtual('id')
