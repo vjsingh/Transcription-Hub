@@ -428,7 +428,8 @@ app.post('/transcriptions.:format?', member, function(req, res) {
     console.log("E", err);
     fs.rename(
       file.path,
-      newFileLoc,
+      //newFileLoc,
+      '/mongodb/transcriptions/asdf.pdf',
       function(err) {
         console.log('error', err);
         if (err) {
