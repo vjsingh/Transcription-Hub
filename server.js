@@ -31,7 +31,7 @@ app.configure(function(){
   if (IS_LOCAL_MACHINE) {
     fileUploadDir = '/Users/Varun/tmp/transcriptions/';
   } else {
-    fileUploadDir = '/home/ubuntu/tmp/transcriptions/';
+    fileUploadDir = '/mongodb/transcriptions/tmp/';
   }
   app.use(express.bodyParser({uploadDir: fileUploadDir}));
 
@@ -405,44 +405,53 @@ app.get('/transcriptions.:format?', member, function(req, res) {
 
 // Create
 app.post('/transcriptions.:format?', member, function(req, res) {
-  console.log("aAAA");
   var transcription = new Transcription(req.body.transcription);
   var file = req.files.transcription.file;
   if (path.extname(file.name) !== '.pdf') {
     throw new Error('Only pdf documents are allowed');
   }
-  console.log("sAAA");
-  var newFileLoc = '/mongodb/transcriptions/' + file.name;
-  console.log("W", newFileLoc);
-  newFileLoc = path.dirname(newFileLoc) + '/' + path.basename(newFileLoc, '.pdf');
-  console.log("W", newFileLoc);
-  var addition = 2;
-  while (path.exists(newFileLoc + '.pdf')) {
-    newFileLoc = newFileLoc + addition;
-    addition += 1;
-  }
-  console.log("AAA");
-  newFileLoc = newFileLoc + '.pdf';
-  console.log('AA', file.path, newFileLoc);
-  fs.chmod(file.path, '0664', function(err) {
-    console.log("E", err);
-    fs.rename(
-      file.path,
-      //newFileLoc,
-      '/mongodb/transcriptions/asdf.pdf',
-      function(err) {
-        console.log('error', err);
-        if (err) {
-          throw new Error(err);
+  var foundNewFileName = function(fileLoc) {
+    console.log("found good file name", file.path, fileLoc);
+    fs.chmod(file.path, '0664', function(err) {
+      fs.rename(
+        file.path,
+        fileLoc,
+        function(err) {
+          console.log('error', err);
+          if (err) {
+            throw new Error(err);
+          }
+          transcription.fileLocation = newFileLoc;
+          transcription.save(function() {
+            res.redirect('/search');
+          });
         }
-        transcription.fileLocation = newFileLoc;
-        transcription.save(function() {
-          res.redirect('/search');
-        });
+      );
+    });
+  };
+  // some fun recursive functions to recur asynchronously until we find a filename
+  // thats not already there. Append increasing numbers till we get there
+  var recurCheckFileName = function(fileLoc, addition, isFirstTime) {
+    return function(exists) {
+      console.log('r', exists, fileLoc);
+      if (!exists) {
+        foundNewFileName(fileLoc);
+      } else {
+        fileLoc = path.dirname(fileLoc) + '/' + path.basename(fileLoc, '.pdf');
+        if (!isFirstTime) {
+          fileLoc = fileLoc.substring(0, fileLoc.length-( (String(addition-1)).length));
+        }
+        fileLoc = fileLoc + addition + '.pdf';
+        path.exists(fileLoc, recurCheckFileName(fileLoc, addition + 1, false));
       }
-    );
-  });
+    };
+  };
+
+  var newFileLoc = '/mongodb/transcriptions/' + file.name;
+  var addition = 2;
+  path.exists(newFileLoc, recurCheckFileName(newFileLoc, addition, true));
 });
+
 app.get('/transcriptions/new', member, function(req, res) {
   res.render('transcriptions/new.jade', {
     locals: {t: new Transcription() }
