@@ -422,8 +422,8 @@ app.post('/transcriptions.:format?', member, function(req, res) {
   console.log("AAA");
   newFileLoc = newFileLoc + '.pdf';
   console.log('AA', file.path, newFileLoc);
-  exec("sudo chmod -R /home/ubuntu/tmp 0660", function puts(error, stdout, stderr) {
-    console.log(error, stdout, stderr);
+  fs.chmod(file.path, '0664', function(err) {
+    console.log("E", err);
     fs.rename(
       file.path,
       newFileLoc,
