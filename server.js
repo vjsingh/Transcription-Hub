@@ -16,13 +16,20 @@ var express = require('express'),
   //routes = require('./routes')
 
 // Configuration
+var IS_LOCAL_MACHINE = siteConf.isLocal;
 
 app.configure(function(){
   app.set('views', __dirname + '/views');
   app.set('view engine', 'jade');
   app.set('view options', {pretty: true});
   //app.set('db-uri', 'mongodb://transcriptionhub:spam1601@staff.mongohq.com:10093/jazz');
-  app.use(express.bodyParser({uploadDir: '~/tmp/transcriptions/'}));
+  var fileUploadDir;
+  if (IS_LOCAL_MACHINE) {
+    fileUploadDir = '/Users/Varun/tmp/transcriptions/';
+  } else {
+    fileUploadDir = '/home/ubuntu';
+  }
+  app.use(express.bodyParser({uploadDir: fileUploadDir}));
 
   app.use(express.cookieParser());
   app.use(express.session({
@@ -421,7 +428,7 @@ app.post('/transcriptions.:format?', member, function(req, res) {
       }
       transcription.fileLocation = newFileLoc;
       transcription.save(function() {
-        res.redirect('/upload2');
+        res.redirect('/search');
       });
     }
   );

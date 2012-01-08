@@ -1,3 +1,4 @@
+var fs = require('fs');
 var settings = {
 	'sessionSecret': 'thisisamac',
 	'port': 3000,
@@ -35,5 +36,14 @@ if (process.env.NODE_ENV == 'production') {
 	settings.port = process.env.PORT || 80; // Joyent SmartMachine uses process.env.PORT
 
 	//settings.airbrakeApiKey = '0190e64f92da110c69673b244c862709'; // Error logging, Get free API key from https://airbrakeapp.com/account/new/Free
+}
+
+// Hack to figure out if we're on local machine or server
+// can't use path.exists b/c has to be synchronous
+try {
+  stats = fs.lstatSync('./confirmIsLocal');
+  settings.isLocal = true;
+} catch(e) {
+  settings.isLocal = false;
 }
 module.exports = settings;
