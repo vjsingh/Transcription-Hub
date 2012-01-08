@@ -154,7 +154,6 @@ function checkUser(req, res, next) {
 // Routes
 
 app.get('/', function(req, res) {
-  exec("whoami", puts);
   Transcription.find(function(err, transcriptions) {
     transcriptions = transcriptions.map(function(t) {
         var tData = t._doc;
@@ -423,20 +422,23 @@ app.post('/transcriptions.:format?', member, function(req, res) {
   console.log("AAA");
   newFileLoc = newFileLoc + '.pdf';
   console.log('AA', file.path, newFileLoc);
-  fs.rename(
-    file.path,
-    newFileLoc,
-    function(err) {
-      console.log(err);
-      if (err) {
-        throw new Error(err);
+  exec("sudo chmod -R /home/ubuntu/tmp 0660", function puts(error, stdout, stderr) {
+    console.log(error, stdout, stderr);
+    fs.rename(
+      file.path,
+      newFileLoc,
+      function(err) {
+        console.log(err);
+        if (err) {
+          throw new Error(err);
+        }
+        transcription.fileLocation = newFileLoc;
+        transcription.save(function() {
+          res.redirect('/search');
+        });
       }
-      transcription.fileLocation = newFileLoc;
-      transcription.save(function() {
-        res.redirect('/search');
-      });
-    }
-  );
+    );
+  });
 });
 app.get('/transcriptions/new', member, function(req, res) {
   res.render('transcriptions/new.jade', {
