@@ -413,7 +413,9 @@ app.post('/transcriptions.:format?', member, function(req, res) {
   }
   console.log("sAAA");
   var newFileLoc = '/mongodb/transcriptions/' + file.name;
-  newFileLoc = path.basename(newFileLoc, '.pdf');
+  console.log("W", newFileLoc);
+  newFileLoc = path.dirname(newFileLoc) + '/' + path.basename(newFileLoc, '.pdf');
+  console.log("W", newFileLoc);
   var addition = 2;
   while (path.exists(newFileLoc + '.pdf')) {
     newFileLoc = newFileLoc + addition;
