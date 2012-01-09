@@ -17,17 +17,29 @@
       // in a hacky way
       - numSearchItems = searchItems.length
       input(type='hidden', id='numSearchItems', value=numSearchItems)
-      - for (var sIndex in searchItems)
-        - divName = 'search' + sIndex
-        - s = searchItems[sIndex]
-        div(id=divName).row.search-box.btn
-          .search-title
-            = s.title
-          .search-artist
-            = s.artist
-          .search-album
-            = s.album
-        br
+      .search-pane
+        - for (var sIndex in searchItems)
+          - divName = 'search' + sIndex
+          - s = searchItems[sIndex]
+          div(id=divName).row.search-box.btn
+            .row
+              .span-one-half
+                - if (type === 'transcriptions')
+                  img(src='/images/arrow2Up.png')
+                  .numKarmaSearch
+                    = s.votes
+                  img(src='/images/arrow2.png')
+                - else
+                  | Tiadjisad bounty
+              .span-one-half
+                .search-result-fields
+                  .search-title
+                    = s.title
+                  .search-artist
+                    = s.artist
+                  .search-album
+                    = s.album
+          br
   .content
     #search-display.hero-unit
       - if (searchItems.length > 0)

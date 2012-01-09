@@ -21,6 +21,7 @@ function puts(error, stdout, stderr) { sys.puts(stdout) }
 
 // Configuration
 var IS_LOCAL_MACHINE = siteConf.isLocal;
+var TRANSCRIPTION_FILE_DIR = '/mongodb/transcriptions/';
 
 app.configure(function(){
   app.set('views', __dirname + '/views');
@@ -31,7 +32,7 @@ app.configure(function(){
   if (IS_LOCAL_MACHINE) {
     fileUploadDir = '/Users/Varun/tmp/transcriptions/';
   } else {
-    fileUploadDir = '/mongodb/transcriptions/tmp/';
+    fileUploadDir = TRANSCRIPTION_FILE_DIR + 'tmp/';
   }
   app.use(express.bodyParser({uploadDir: fileUploadDir}));
 
@@ -150,6 +151,9 @@ function checkUser(req, res, next) {
   //console.log(req.currentUser);
   next();
 }
+
+app.listen(3000);
+console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
 
 // Routes
 
@@ -382,8 +386,39 @@ app.get('/transcriptions', member, function(req, res) {
   */
 });
 
-app.listen(3000);
-console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
+//app.get('/transcriptionPdf/:fileLoc', member, function(req, res) {
+app.get('/transcriptionPdf/:download/:fileLoc', member, function(req, res) {
+  var fileLoc = TRANSCRIPTION_FILE_DIR + req.params.fileLoc;
+  var download = req.params.download;
+  path.exists(fileLoc, function(exists) {
+    if (exists) {
+      if (download) {
+        res.writeHead(200);
+      } else {
+        res.writeHead(200, {'Content-Type': 'application/pdf'});
+      }
+      fs.readFile(fileLoc, function(err, pdfData) {
+        if (err) {
+          throw new Error(err);
+        }
+        console.log("READFILE ERROR: ", err);
+        res.end(pdfData, 'binary');
+      });
+    } else {
+      throw new Error("Couldn't find Pdf");
+    }
+  });
+});
+
+app.get('/upVote/:trId', function(req, res) {
+  var trId = req.params.trId;
+  Transcription.findById(trId, function(err, tr) {
+    tr.upVotes = tr.upVotes + 1;
+    tr.save();
+  });
+  res.write(JSON.stringify({trId: req.params.trId}));
+  res.end();
+});
 
 // CRUD for transcriptions
 
@@ -421,7 +456,8 @@ app.post('/transcriptions.:format?', member, function(req, res) {
           if (err) {
             throw new Error(err);
           }
-          transcription.fileLocation = newFileLoc;
+          transcription.fileLocation = path.basename(newFileLoc);
+          transcription.userId = req.currentUser.userId;
           transcription.save(function() {
             res.redirect('/search');
           });
@@ -447,7 +483,7 @@ app.post('/transcriptions.:format?', member, function(req, res) {
     };
   };
 
-  var newFileLoc = '/mongodb/transcriptions/' + file.name;
+  var newFileLoc = TRANSCRIPTION_FILE_DIR + file.name;
   var addition = 2;
   path.exists(newFileLoc, recurCheckFileName(newFileLoc, addition, true));
 });
@@ -537,7 +573,10 @@ app.post('/search', member, function(req, res) {
   console.log(search);
 
   // Bastardized to also take bounties
-  function gotTrs(trs) {
+  function gotTrs(err, trs) {
+    if (err) {
+      throw new Error(err);
+    }
     res.render('transcriptions', {
       locals: {
         searchItems: trs,
@@ -547,50 +586,34 @@ app.post('/search', member, function(req, res) {
     });
   }
   function makeReg(search) {
-    var re = new RegExp('search', 'i');
-    return "search".replace(re, search);
+    var re = new RegExp(search, 'i');
+    return re;
   }
   if (search) {
     var title = makeReg(search.title);
     var artist = makeReg(search.artist);
+    console.log(artist);
     var album  = makeReg(search.album);
-    Transcription.find()
-      .regex('title', title)
-      .regex('artist', artist)
-      .regex('album', album)
-      .run(function(err, trs) {
-        gotTrs(trs);
-      }
-    );
-  } else {
+    Transcription
+      .where('title', title)
+      .where('artist', artist)
+      .where('album', album)
+      .sort('votes', -1)
+      .execFind(gotTrs);
+  } else { // search all fields
     search = req.body.searchAll;
-    var regSearch = makeReg(search);
-    Transcription.find()
-      .regex('title', regSearch)
-      .run(function(err, trs1) {
-        Transcription.find()
-          .regex('album', regSearch)
-          .run(function(err, trs2) {
-            Transcription.find()
-              .regex('artist', regSearch)
-              .run(function(err, trs3) {
-                var trs = trs1.concat(trs2).concat(trs3);
-
-                // get only unique trs
-                var trIds = {};
-                var uniqueTrs = [];
-                for (var i = 0; i < trs.length; i++) {
-                  var tr = trs[i];
-                  if (!trIds[tr.id]) {
-                    trIds[tr.id] = true;
-                    uniqueTrs.push(tr);
-                  }
-                }
-                trs = uniqueTrs;
-                gotTrs(trs);
-            });
-          });
-      }
-    );
+    if (search === '') {
+      console.log('empty');
+      Transcription.find()
+      .sort('votes', -1)
+      .execFind(gotTrs);
+    } else {
+      Transcription
+        .$where('(/' + search + '/i).test(this.title)' +
+          ' || (/' + search + '/i).test(this.artist)' +
+          ' || (/' + search + '/i).test(this.album)')
+        .sort('votes', -1)
+        .execFind(gotTrs);
+    }
   }
 });

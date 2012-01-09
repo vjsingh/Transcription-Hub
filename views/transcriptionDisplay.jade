@@ -1,7 +1,39 @@
-ul
-  .display-title
-    = t.title
-  .display-artist
-    = t.artist
-  .display-album
-    = t.album
+.row
+  a#upVote(title="Good Transcription!", transcriptionId=t.id, href='#')
+    img(src='/images/arrow2Up.png')
+  .numKarmaSearch
+    = t.votes
+  a(title="Mediocre or Junk Transcription", href='/')
+    img(src='/images/arrow2.png')
+  br
+
+  .span-one-half
+    - pdfUrl = 'transcriptionPdf/false/' + t.fileLocation
+    - pdfUrlDownload = 'transcriptionPdf/true/' + t.fileLocation
+
+    iframe(src=pdfUrl, width='500px', height='500px')
+      You have a very old browser so we can't show you the transcription here, please upgrade to Google Chrome or Firefox!
+    p
+      a(href=pdfUrlDownload) Download Transcription
+  .span-one-half
+      ul
+        .display-title
+          = t.title
+        .display-artist
+          = t.artist
+        .display-album
+          = t.album
+
+script(type='text/javascript')
+  $(function() {
+    function doOnClick(id, urlStr) {
+      $(id).click(function(c) {
+        console.log("CLICKED");
+        var trId = $(id).attr('transcriptionid');
+        $.get('/' + urlStr + '/' + trId, function(obj) {
+          console.log('returned', obj);
+        });
+      });
+    }
+    doOnClick('#upVote', 'upVote');
+  });

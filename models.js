@@ -7,6 +7,11 @@ function defineModels(mongoose, fn) {
   var Schema = mongoose.Schema,
   ObjectId = Schema.ObjectId;
 
+  function changeNumVotes(v) {
+    this.votes = (this.upVotes || 0) - (this.downVotes || 0);
+    return v;
+  }
+
   // Model: Transcription
   Transcription = new Schema({
     'title': {type: String, index: true},
@@ -14,7 +19,9 @@ function defineModels(mongoose, fn) {
     'artist': {type: String, index: true},
     'description': {type: String},
     'fileLocation': {type: String},
-    'upVotes': {type: Number},
+    'upVotes': {type: Number, 'default': 0, set: changeNumVotes},
+    'downVotes': {type: Number, 'default': 0, set: changeNumVotes},
+    'votes': {type: Number},
     'userId': {type: ObjectId, index: true}
   });
 
@@ -22,6 +29,18 @@ function defineModels(mongoose, fn) {
     .get(function() {
       return this._id.toHexString();
   });
+
+  Transcription.pre('save', function(next) {
+    this.votes = this.upVotes - this.downVotes;
+    next();
+  });
+  /*
+  Transcription.virtual('votes')
+    .get(function() {
+      this.votes = this.upVotes - this.downVotes;
+      return this.upVotes - this.downVotes;
+  });
+  */
 
   /**
     * Model: User
@@ -32,7 +51,7 @@ function defineModels(mongoose, fn) {
 
   User = new Schema({
     'username': { type: String, validate: [validatePresenceOf, 'a username is required'], index: { unique: true } },
-    'email': { type: String, validate: [validatePresenceOf, 'an email is required'], index: { unique: true } },
+    'email': { type: String, lowercase: true,  validate: [validatePresenceOf, 'an email is required'], index: { unique: true } },
     //'profPicLoc': {type: String}, //index: { unique: true}},
     'karmaPoints': {type: Number},
     'personalWebsite': {type: String},
