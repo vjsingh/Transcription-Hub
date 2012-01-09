@@ -53,6 +53,11 @@ function defineModels(mongoose, fn) {
     'username': { type: String, validate: [validatePresenceOf, 'a username is required'], index: { unique: true } },
     'email': { type: String, lowercase: true,  validate: [validatePresenceOf, 'an email is required'], index: { unique: true } },
     //'profPicLoc': {type: String}, //index: { unique: true}},
+
+    // Array of transcription ids
+    'upVotes': {type: [String], 'default': []},
+    'downVotes': {type: [String], 'default': []},
+
     'karmaPoints': {type: Number},
     'personalWebsite': {type: String},
     'hashed_password': String,
@@ -72,6 +77,21 @@ function defineModels(mongoose, fn) {
     })
     .get(function() { return this._password; });
 
+  // Returns if the user has voted for a particular
+  // transcription or not. 0 for no, 1 for downVote,
+  // 2 for upVote
+  User.statics.hasVoted = function(userId, trId, cb) {
+    this.findById(userId, function(err, user) {
+      if (user.upVotes.indexOf(trId) > -1) {
+        cb(err, 2);
+      } else if (user.downVotes.indexOf(trId) > -1) {
+        cb(err, 1);
+      } else {
+        cb(err, 0);
+      }
+    });
+  };
+
   User.method('authenticate', function(plainText) {
     return this.encryptPassword(plainText) === this.hashed_password;
   });
@@ -84,6 +104,7 @@ function defineModels(mongoose, fn) {
     return crypto.createHmac('sha1', this.salt).update(password).digest('hex');
   });
 
+  /*
   User.pre('save', function(next) {
     if (!validatePresenceOf(this.password)) {
       next(new Error('Invalid password'));
@@ -91,6 +112,7 @@ function defineModels(mongoose, fn) {
       next();
     }
   });
+  */
 
   /**
     * Model: LoginToken

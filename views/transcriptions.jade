@@ -1,3 +1,8 @@
+// jScrollPane
+- cssScripts.push('/stylesheets/jquery.jscrollpane.css')
+- scripts.push('/javascripts/jquery.jscrollpane.min.js')
+- scripts.push('/javascripts/jquery.mousewheel.js')
+//script(type='text/javascript', src='/javascripts/mwheelIntent.js')
 .container-fluid
   .sidebar
     .well
@@ -21,14 +26,19 @@
         - for (var sIndex in searchItems)
           - divName = 'search' + sIndex
           - s = searchItems[sIndex]
-          div(id=divName).row.search-box.btn
+          - if (type === 'transcriptions')
+            - ajaxUrl = '/transcriptions/' + s.id + '.html'
+          - else
+            - ajaxUrl = '/bounty/' + s.id + '.html'
+          div(id=divName, ajaxUrl=ajaxUrl, sId=s.id).row.search-box.btn
             .row
               .span-one-half
                 - if (type === 'transcriptions')
-                  img(src='/images/arrow2Up.png')
-                  .numKarmaSearch
-                    = s.votes
-                  img(src='/images/arrow2.png')
+                  .votesArrows(class=searchItems[sIndex].id)
+                    img.upVoteImg(src='/images/arrow2Up.png')
+                    .numKarmaSearch.numVotes
+                      = s.votes
+                    img.downVoteImg(src='/images/arrow2.png')
                 - else
                   | Tiadjisad bounty
               .span-one-half
@@ -44,7 +54,7 @@
     #search-display.hero-unit
       - if (searchItems.length > 0)
         - if (type === 'transcriptions')
-          !=partial('transcriptionDisplay', {locals: { t: searchItems[0] }})
+          !=partial('transcriptionDisplay', {locals: { t: searchItems[0], user:user}})
         - else
           !=partial('bountyDisplay', {locals: { b: searchItems[0] }})
 
@@ -70,8 +80,39 @@
   - }
 
 script(type='text/javascript')
-  $(document).ready(function() {
+  function setVoteArrowColors(type, trId) {
+    // Reset both in case we're switching
+    $('.' + trId + ' .downVoteImg').attr('src', "/images/arrow2.png");
+      $('.' + trId + ' .upVoteImg').attr('src', "/images/arrow2Up.png");
+
+    if (type == 1) {
+      $('.' + trId + ' .downVoteImg').attr('src', "/images/selectedArrow.png");
+    } else if (type == 2) {
+      $('.' + trId + ' .upVoteImg').attr('src', "/images/selectedArrowUp.png");
+    }
+  }
+  $(function() {
     $('#search0').addClass('active');
     $('#searchType').hide();
-  });
 
+
+    $('.search-box').each(function(index, elem) {
+      var trId = $(this).attr('sId');
+      $.get('/hasVoted/' + trId, function(hasVoted) {
+        if (hasVoted === '0') {
+
+        } else {
+          setVoteArrowColors(hasVoted, trId);
+        }
+      });
+    });
+    $('.search-box').click(function() {
+      var ajaxUrl = $(this).attr('ajaxUrl');
+      $.get(ajaxUrl, function(html) {
+        $('#search-display').html(html);
+      });
+    });
+    // use jScrollPane for search scroll pane
+
+    $('.search-pane').jScrollPane({showArrows: true});
+  });

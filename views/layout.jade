@@ -26,6 +26,7 @@ html(class='no-js', lang='en')
         padding-top: 60px;
       }
 
+
     <!-- Le fav and touch icons -->
     <link rel="shortcut icon" href="images/favicon.ico">
     <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
@@ -52,6 +53,12 @@ html(class='no-js', lang='en')
     script(type="text/javascript", src="http://jzaefferer.github.com/jquery-validation/jquery.validate.js")
     script(type="text/javascript", src="/javascripts/validate.js")
     script(type='text/javascript', src='/javascripts/myUtil.js')
+
+    -each cssScript in cssScripts
+      link(rel='stylesheet', href= cssScript)
+    -each script in scripts
+      script(type='text/javascript', src= script)
+    //
 
   - if (typeof(user) !== 'undefined' && user && user.username)
     - userLoggedIn = true

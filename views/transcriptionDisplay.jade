@@ -1,12 +1,17 @@
 .row
-  a#upVote(title="Good Transcription!", transcriptionId=t.id, href='#')
-    img(src='/images/arrow2Up.png')
-  .numKarmaSearch
-    = t.votes
-  a(title="Mediocre or Junk Transcription", href='/')
-    img(src='/images/arrow2.png')
+  .votesArrows(class=t.id)
+    a#upVote(title="Good Transcription!", href='#')
+      img.upVoteImg(src='/images/arrow2Up.png')
+    .numKarmaSearch
+      .numVotes(class=t.id)
+        = t.votes
+    a#downVote(title="Mediocre or Junk Transcription", href='#')
+      img.downVoteImg(src='/images/arrow2.png')
   br
 
+  // Pass variables to javascripts
+  // in a hacky way
+  .jqueryHide(type='hidden', id='trId', trId=t.id)
   .span-one-half
     - pdfUrl = 'transcriptionPdf/false/' + t.fileLocation
     - pdfUrlDownload = 'transcriptionPdf/true/' + t.fileLocation
@@ -26,14 +31,29 @@
 
 script(type='text/javascript')
   $(function() {
-    function doOnClick(id, urlStr) {
+    var trId  = $('#trId').attr('trId');
+    $.get('/hasVoted/' + trId, function(hasVoted) {
+      if (hasVoted === '0') {
+
+      } else {
+        setVoteArrowColors(hasVoted, trId);
+      }
+    });
+
+    // Set handers for voting up or down
+    function doOnClick(id, typeVote) {
       $(id).click(function(c) {
-        console.log("CLICKED");
-        var trId = $(id).attr('transcriptionid');
-        $.get('/' + urlStr + '/' + trId, function(obj) {
-          console.log('returned', obj);
+        $.get('/doVote/' + typeVote + '/' + trId, function(obj) {
+        obj = JSON.parse(obj);
+          if (obj && obj.success) {
+            setVoteArrowColors(typeVote, trId);
+            $('.' + trId + ' .numVotes').html(obj.numVotes);
+          }
         });
       });
     }
-    doOnClick('#upVote', 'upVote');
+    doOnClick('#upVote', '2');
+    doOnClick('#downVote', '1');
+
+    $('.jqueryHide').hide();
   });

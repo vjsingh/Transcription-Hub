@@ -57,11 +57,19 @@ app.configure(function(){
   app.dynamicHelpers({
     user: function(req, res) {
       return req.currentUser || new User();
+    },
+    scripts: function(req, res) {
+      return [];
+    },
+    cssScripts: function(req, res) {
+      return [];
     }
+  });
+  process.on('uncaughtException', function(err) {
+    console.log("AAAAAAAAAAAAAAAAA Caught Exception: ", err);
   });
 
 });
-
 
 app.configure('development', function(){
   //app.use(express.logger({format: ':method :uri' }));
@@ -244,7 +252,6 @@ app.post('/register', function(req, res) {
   user.save(function(err) {
     console.log("SAVING", err);
     if (err) return userSaveFailed();
-    console.log("GOT HERE");
 
     req.flash('info', 'Your account has been created');
     //emails.sendWelcome(user);
@@ -401,7 +408,6 @@ app.get('/transcriptionPdf/:download/:fileLoc', member, function(req, res) {
         if (err) {
           throw new Error(err);
         }
-        console.log("READFILE ERROR: ", err);
         res.end(pdfData, 'binary');
       });
     } else {
@@ -410,14 +416,120 @@ app.get('/transcriptionPdf/:download/:fileLoc', member, function(req, res) {
   });
 });
 
-app.get('/upVote/:trId', function(req, res) {
+
+// Votes
+app.get('/hasVoted/:trId', member, function(req, res) {
+  var userId = req.currentUser.id;
   var trId = req.params.trId;
-  Transcription.findById(trId, function(err, tr) {
-    tr.upVotes = tr.upVotes + 1;
-    tr.save();
+  User.hasVoted(userId, trId, function(err, hasVoted) {
+    if (err) {
+      throw new Error(err);
+    }
+    res.end('' + hasVoted);
   });
-  res.write(JSON.stringify({trId: req.params.trId}));
-  res.end();
+});
+
+function removeVote(typeVote, userId, trId, cb) {
+  var voteArrType;
+  // These are reversed b/c we want to remove the
+  // other type
+  if (typeVote === '1') {
+    voteArrType = 'upVotes';
+  } else if (typeVote === '2') {
+    voteArrType = 'downVotes';
+  } else {
+    console.log("AAAAAAAA ERROR IN removeVote");
+  }
+  Transcription.findById(trId, function(err, tr) {
+    if (err) {
+      throw new Error(err);
+    }
+    tr[voteArrType] = tr[voteArrType] - 1;
+    tr.save();
+    User.findById(userId, function(err, user) {
+      if (err) {
+        throw new Error(err);
+      }
+      trIdIndex = user[voteArrType].indexOf(trId);
+      if (trIdIndex === -1) {
+        console.log("AAAAAAA ERROR ALERT:  removing vote thats not there");
+        cb(false);
+      } else {
+        user[voteArrType].splice(trIdIndex, 1);
+        user.save();
+        cb(true);
+      }
+    });
+  });
+}
+function doVote(typeVote, userId, trId, cb) {
+  Transcription.findById(trId, function(err, tr) {
+    if (err) {
+      throw new Error(err);
+    }
+    if (typeVote === '1') {
+      tr.downVotes = tr.downVotes + 1;
+    } else if (typeVote === '2') {
+      tr.upVotes = tr.upVotes + 1;
+    }
+
+    // can't use tr.votes b/c hasn't saved yet
+    numVotes = tr.upVotes - tr.downVotes;
+    tr.save();
+    User.findById(userId, function(err, user) {
+      if (err) {
+        throw new Error(err);
+      }
+      if (typeVote === '1') {
+        user.downVotes.push(trId);
+      } else if (typeVote === '2') {
+        user.upVotes.push(trId);
+      }
+      user.save();
+      cb(true, numVotes);
+    });
+  });
+}
+app.get('/doVote/:typeVote/:trId', member, function(req, res) {
+  var trId = req.params.trId;
+  var typeVote = req.params.typeVote + '';
+  var userId = req.currentUser.id;
+  failObjStr = JSON.stringify({success: false});
+  User.hasVoted(userId, trId, function(err, hasVoted) {
+    if (err) {
+      throw new Error(err);
+    }
+    hasVoted = hasVoted + '';
+
+    // Never voted
+    if (hasVoted === '0') {
+      doVote(typeVote, userId, trId, function(success, numVotes) {
+        res.end(JSON.stringify({
+          success: s,
+          numVotes: numVotes
+        }));
+      });
+
+    // Change vote
+    } else if (hasVoted !== typeVote) {
+      removeVote(typeVote, userId, trId, function(valid) {
+        if (!valid) {
+          res.end(failObjStr);
+        } else {
+          doVote(typeVote, userId, trId, function(success, numVotes) {
+            res.end(JSON.stringify({
+              success: success,
+              numVotes: numVotes
+            }));
+          });
+        }
+      });
+
+    // Don't let vote again
+    } else {
+      res.end(failObjStr);
+    }
+  });
 });
 
 // CRUD for transcriptions
@@ -457,7 +569,7 @@ app.post('/transcriptions.:format?', member, function(req, res) {
             throw new Error(err);
           }
           transcription.fileLocation = path.basename(newFileLoc);
-          transcription.userId = req.currentUser.userId;
+          transcription.userId = req.currentUser.id;
           transcription.save(function() {
             res.redirect('/search');
           });
