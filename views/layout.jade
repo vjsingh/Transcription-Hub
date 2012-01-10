@@ -64,37 +64,46 @@ html(class='no-js', lang='en')
     - userLoggedIn = true
   - else
     - userLoggedIn = false
-  body#entire-page
-    .topbar
-      .topbar-inner
-        .container-fluid
-          a.brand(href='/') Transcription Hub
-          ul.nav
-            li
-              a(href='/about') About
-            - if (userLoggedIn)
-              li
-                a(href='/Upload') Upload
-              li
-                a(href='/Bounty') Bounty
-            - else
-              li
-                a(href='/register') Register
-          //a.button.btn.primary.pull-left(href="/upload") Upload
-          //a.button.btn.primary.pull-left(href="/register") Register
-          form.pull-left(method='post', action='/search')
-            input(type='text', name='searchAll', placeholder='Enter Artist/Song/Album')
-          .pull-right
-            - if (userLoggedIn)
-              li.right
-                | Logged in as:
-                a#profile(href='/profile')
-                  = user.username
-                a#logout(href='/logout') Log Out
-            - else
-              script(type='text/javascript', src='/javascripts/login.js')
-              form#loginTopBar(method='post', action'=/login')
-                != partial('loginFields', {locals: {user: user}})
-    != body
-    footer
-      &copy; Varun Singh 2011
+  body
+    #entire-page
+      #entire-page-minus-footer
+        .topbar
+          .topbar-inner
+            .container-fluid
+              a.brand(href='/')
+                img#logoTopbar(src='/images/saxIcon.png', width=30, height=30)
+                .text
+                  | Transcription Hub
+              ul.nav
+                li
+                  a(href='/about') About
+                - if (userLoggedIn)
+                  li
+                    a(href='/Upload') Upload
+                  li
+                    a(href='/Bounty') Bounty
+                - else
+                  li
+                    a(href='/register') Register
+              //a.button.btn.primary.pull-left(href="/upload") Upload
+              //a.button.btn.primary.pull-left(href="/register") Register
+              form.pull-left(method='post', action='/search')
+                input(type='text', name='searchAll', placeholder='Enter Artist/Song/Album')
+              .pull-right
+                - if (userLoggedIn)
+                  li.right
+                    | Logged in as:
+                    a#profile(href='/profile')
+                      = user.username
+                    a#logout(href='/logout') Log Out
+                - else
+                  script(type='text/javascript', src='/javascripts/login.js')
+                  form#loginTopBar(method='post', action'=/login')
+                    != partial('loginFields', {locals: {user: user}})
+        != body
+      #footer
+        .inner.container-fluid
+          | Built with Node.js, Express, and MongoDB.
+          a#footerFeedback(href='#') Feedback & Support
+          br
+          &copy; 2012 Varun Singh

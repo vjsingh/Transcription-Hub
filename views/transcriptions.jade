@@ -51,7 +51,7 @@
                     = s.album
           br
   .content
-    #search-display.hero-unit
+    #search-display
       - if (searchItems.length > 0)
         - if (type === 'transcriptions')
           !=partial('transcriptionDisplay', {locals: { t: searchItems[0], user:user}})

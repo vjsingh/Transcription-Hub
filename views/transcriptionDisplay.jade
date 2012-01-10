@@ -1,18 +1,30 @@
-.row
-  .votesArrows(class=t.id)
-    a#upVote(title="Good Transcription!", href='#')
-      img.upVoteImg(src='/images/arrow2Up.png')
-    .numKarmaSearch
-      .numVotes(class=t.id)
-        = t.votes
-    a#downVote(title="Mediocre or Junk Transcription", href='#')
-      img.downVoteImg(src='/images/arrow2.png')
-  br
+// Pass variables to javascripts
+// in a hacky way
+.jqueryHide(type='hidden', id='trId', trId=t.id)
 
-  // Pass variables to javascripts
-  // in a hacky way
-  .jqueryHide(type='hidden', id='trId', trId=t.id)
-  .span-one-half
+.row
+  .span6
+    .row
+      .span1
+        .votesArrows(class=t.id)
+          a#upVote(title="Good Transcription!", href='#')
+            img.upVoteImg(src='/images/arrow2Up.png')
+          .numKarmaSearch
+            .numVotes(class=t.id)
+              = t.votes
+          a#downVote(title="Mediocre or Junk Transcription", href='#')
+            img.downVoteImg(src='/images/arrow2.png')
+      .span5
+        h5.trSongInfoDisplay
+          .display-title
+            = t.title
+          .display-artist
+            = t.artist
+          .display-album
+            = t.album
+    br
+    = t.description
+  .span4
     - pdfUrl = 'transcriptionPdf/false/' + t.fileLocation
     - pdfUrlDownload = 'transcriptionPdf/true/' + t.fileLocation
 
@@ -20,14 +32,6 @@
       You have a very old browser so we can't show you the transcription here, please upgrade to Google Chrome or Firefox!
     p
       a(href=pdfUrlDownload) Download Transcription
-  .span-one-half
-      ul
-        .display-title
-          = t.title
-        .display-artist
-          = t.artist
-        .display-album
-          = t.album
 
 script(type='text/javascript')
   $(function() {

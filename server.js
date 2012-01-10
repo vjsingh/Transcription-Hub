@@ -165,6 +165,9 @@ console.log("Express server listening on port %d in %s mode", app.address().port
 
 // Routes
 
+app.get('/svg', function(req, res) {
+  res.render('svg', {layout: ''});
+});
 app.get('/', function(req, res) {
   Transcription.find(function(err, transcriptions) {
     transcriptions = transcriptions.map(function(t) {
@@ -559,23 +562,23 @@ app.post('/transcriptions.:format?', member, function(req, res) {
   }
   var foundNewFileName = function(fileLoc) {
     console.log("found good file name", file.path, fileLoc);
-    fs.chmod(file.path, '0664', function(err) {
-      fs.rename(
-        file.path,
-        fileLoc,
-        function(err) {
-          console.log('error', err);
-          if (err) {
-            throw new Error(err);
-          }
-          transcription.fileLocation = path.basename(newFileLoc);
-          transcription.userId = req.currentUser.id;
-          transcription.save(function() {
-            res.redirect('/search');
-          });
+    //fs.chmod(file.path, '0664', function(err) {
+    fs.rename(
+      file.path,
+      fileLoc,
+      function(err) {
+        console.log('error', err);
+        if (err) {
+          throw new Error(err);
         }
-      );
-    });
+        transcription.fileLocation = path.basename(newFileLoc);
+        transcription.userId = req.currentUser.id;
+        transcription.save(function() {
+          res.redirect('/search');
+        });
+      }
+    );
+    //});
   };
   // some fun recursive functions to recur asynchronously until we find a filename
   // thats not already there. Append increasing numbers till we get there
