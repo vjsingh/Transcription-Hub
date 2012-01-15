@@ -7,9 +7,10 @@ $(document).ready(function() {
       data: $('form#loginTopBar').serialize(),
       success: function(data) {
         if (data.succeeded) {
+          $('form#loginTopBar').removeClass('error');
           $('form#loginTopBar > input#loginSubmit').click();
         } else {
-          $('form#login').addClass('error');
+          $('form#loginTopBar').addClass('error');
         }
       }
     });
@@ -24,7 +25,7 @@ $(document).ready(function() {
     }
   });
 
-  //$('#loginSubmit').hide();
+  $('#loginSubmit').hide();
   /*
   $('#login').validate({
     rules: {

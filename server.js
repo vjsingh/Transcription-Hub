@@ -3,6 +3,10 @@
  */
 
 var express = require('express'),
+  jade = require('jade'),
+  expressValidator = require('express-validator'),
+  check = require('validator').check,
+  sanitize = require('validator').sanitize,
   app = module.exports = express.createServer(),
   mongoose = require('mongoose'),
   mongoStore = require('connect-mongodb'),
@@ -35,6 +39,7 @@ app.configure(function(){
     fileUploadDir = TRANSCRIPTION_FILE_DIR + 'tmp/';
   }
   app.use(express.bodyParser({uploadDir: fileUploadDir}));
+  app.use(expressValidator);
 
   app.use(express.cookieParser());
   app.use(express.session({
@@ -66,7 +71,7 @@ app.configure(function(){
     }
   });
   process.on('uncaughtException', function(err) {
-    console.log("AAAAAAAAAAAAAAAAA Caught Exception: ", err);
+    console.log("ZQX Caught Exception: ", err);
   });
 
 });
@@ -133,6 +138,7 @@ function authenticateFromLoginToken(req, res, next) {
   }));
 }
 
+//Middleware
 function member(req, res, next) {
   if (!req.currentUser) {
       res.redirect('/login');
@@ -159,6 +165,13 @@ function checkUser(req, res, next) {
   //console.log(req.currentUser);
   next();
 }
+function validateErr(req, res, next) {
+  req.onValidationError(function(msg) {
+    console.log('Validation Error: ' + msg);
+    throw new Error(msg);
+  });
+  next();
+}
 
 app.listen(3000);
 console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
@@ -169,19 +182,9 @@ app.get('/svg', function(req, res) {
   res.render('svg', {layout: ''});
 });
 app.get('/', function(req, res) {
-  Transcription.find(function(err, transcriptions) {
-    transcriptions = transcriptions.map(function(t) {
-        var tData = t._doc;
-      return {title: tData.title, id: tData._id};
-    });
-    //console.log(transcriptions);
-    //console.log(req.currentUser);
-    res.render('index', {
-      locals: {
-        title: 'A Title',
-        transcriptions: transcriptions
-      }
-    });
+  res.render('index', {
+    locals: {
+    }
   });
 });
 
@@ -195,10 +198,12 @@ app.get('/about', function(req, res) {
 
 // Bounty
 app.get('/bounty', member, function(req, res) {
-  console.log("AA");
-  Bounty.find(function(err, bounties) {
-    console.log("AA", bounties);
-    //res.render('bounty', { locals: {
+  Bounty.find()
+  .sort('points', -1)
+  .execFind(function(err, bounties) {
+    if (err) {
+      throw new Error(err);
+    }
     res.render('transcriptions', { locals: {
         searchItems: bounties,
         search: {},
@@ -208,27 +213,66 @@ app.get('/bounty', member, function(req, res) {
   });
 });
 app.get('/bounty/:id', member, function(req, res) {
-  console.log("bounty id", req.params.id);
-  Bounty.find(function(err, bounties) {
-    console.log("AA", bounties);
-    //res.render('bounty', { locals: {
-    res.render('transcriptions', { locals: {
-        searchItems: bounties,
+  Bounty.findById(req.params.id, function(err, b) {
+    if (err) {
+      throw new Error(err);
+    }
+    res.render('transcriptions', {
+      locals: {
+        searchItems: [b],
         search: {},
         type: 'bounty'
       }
     });
   });
 });
-app.get('/newBounty', member, function(req, res) {
+
+app.get('/createBounty', member, function(req, res) {
   res.render('newBounty');
 });
-app.post('/newBounty', member, function(req, res) {
-  var bounty = new Bounty(req.body.bounty);
-  bounty.save(function(err) {
-    console.log("bounty err", err);
+
+function addToBounty(bounty, points, req, res) {
+  bounty.points = parseInt(bounty.points, 10) + parseInt(points, 10);
+  bounty.save();
+  User.findById(req.currentUser.id, function(err, user) {
+    if (user.karmaPoints < points) {
+      console.log('ZQX Cheater: ' + user.id + user.username);
+      throw new Error('Stop trying to cheat! Your account has been flagged');
+    }
+    user.karmaPoints = user.karmaPoints - points;
+    user.save();
     res.redirect('/bounty');
   });
+}
+app.post('/createBounty', member, function(req, res) {
+  var bounty = new Bounty(req.body.bounty);
+
+  // set points to 0 b/c added later
+  var points = bounty.points;
+  bounty.points = 0;
+
+  bounty.userId = req.currentUser.id;
+  bounty.save(function(err) {
+    if (err) {
+      throw new Error(err);
+    }
+    addToBounty(bounty, points, req, res);
+  });
+});
+
+app.post('/addToBounty', member, function(req, res) {
+  var points = req.body.bounty.points;
+  var bountyId = req.body.bountyId;
+  Bounty.findById(bountyId, function(err, bounty) {
+    if (err) {
+      throw new Error(err);
+    }
+    addToBounty(bounty, points, req, res);
+  });
+});
+
+app.post('/fillBounty', function(req, res) {
+  throw new Error('Not yet implemented :(');
 });
 
 // Users
@@ -244,6 +288,13 @@ app.get('/register', function(req, res) {
 
 app.post('/register', function(req, res) {
   var user = new User(req.body.user);
+  var paramsToCheck = ['username', 'email', 'password'];
+  paramsToCheck.forEach(function(v) {
+    user[v] = sanitize(user[v]).trim();
+    check(user[v], 'Invalid ' + v + '!').notEmpty().len(3, 64);
+  });
+  check(user.email).isEmail();
+
 
   function userSaveFailed() {
     req.flash('error', 'Account creation failed');
@@ -297,6 +348,61 @@ app.post('/register', function(req, res) {
     checkField('email', req, res);
   });
 })();
+
+app.get('/checkPoints/', function(req, res) {
+  if (!req.query || !req.query.bounty || !req.query.bounty.points) {
+    res.write('true');
+    res.end();
+  } else {
+    var points = parseInt(req.query.bounty.points, 10);
+    User.findById(req.currentUser.id, function(err, user) {
+      if (err) {
+        console.log("ERROR: " + err);
+      } else {
+        if (user.karmaPoints >= points) {
+          res.write('true');
+          res.end();
+        } else {
+          res.write('false');
+          res.end();
+        }
+      }
+    });
+  }
+});
+
+var profileTrsDisplay = fs.readFileSync('./views/userProfileTranscriptions.jade');
+var profileTrsDisplayTemple = jade.compile(profileTrsDisplay.toString('utf8'));
+app.get('/userTranscriptions/:userId', function(req, res) {
+  Transcription.find({userId: req.params.userId}, function(err, trs) {
+    if (err) {
+      throw new Error(err);
+    }
+    var html = profileTrsDisplayTemple({
+      trs: trs
+    });
+    res.json({
+      html: html
+    });
+  });
+});
+
+var profileBountyDisplay = fs.readFileSync('./views/userProfileBounties.jade');
+var profileBountyDisplayTemple = jade.compile(profileBountyDisplay.toString('utf8'));
+app.get('/userBounties/:userId', function(req, res) {
+  Bounty.find({userId: req.params.userId}, function(err, bounties) {
+    console.log(bounties);
+    if (err) {
+      throw new Error(err);
+    }
+    var html = profileBountyDisplayTemple({
+      bounties: bounties
+    });
+    res.json({
+      html: html
+    });
+  });
+});
 
 // Sessions
 app.get('/login', function(req, res) {
@@ -409,6 +515,7 @@ app.get('/transcriptionPdf/:download/:fileLoc', member, function(req, res) {
       }
       fs.readFile(fileLoc, function(err, pdfData) {
         if (err) {
+          console.log('error finding');
           throw new Error(err);
         }
         res.end(pdfData, 'binary');
@@ -419,6 +526,17 @@ app.get('/transcriptionPdf/:download/:fileLoc', member, function(req, res) {
   });
 });
 
+app.get('/getUsername/:userId', member, function(req, res) {
+  var userId = req.params.userId;
+  // TODO: Only get username field
+  User.findById(userId, function(err, user) {
+    if (err) {
+      throw Error(err);
+    }
+    res.write(user.username + "");
+    res.end();
+  });
+});
 
 // Votes
 app.get('/hasVoted/:trId', member, function(req, res) {
@@ -441,7 +559,7 @@ function removeVote(typeVote, userId, trId, cb) {
   } else if (typeVote === '2') {
     voteArrType = 'downVotes';
   } else {
-    console.log("AAAAAAAA ERROR IN removeVote");
+    console.log("ZQX ERROR IN removeVote");
   }
   Transcription.findById(trId, function(err, tr) {
     if (err) {
@@ -455,7 +573,7 @@ function removeVote(typeVote, userId, trId, cb) {
       }
       trIdIndex = user[voteArrType].indexOf(trId);
       if (trIdIndex === -1) {
-        console.log("AAAAAAA ERROR ALERT:  removing vote thats not there");
+        console.log("ZQX ERROR ALERT:  removing vote thats not there");
         cb(false);
       } else {
         user[voteArrType].splice(trIdIndex, 1);
@@ -485,8 +603,10 @@ function doVote(typeVote, userId, trId, cb) {
       }
       if (typeVote === '1') {
         user.downVotes.push(trId);
+        user.karmaPoints = user.karmaPoints - 1;
       } else if (typeVote === '2') {
         user.upVotes.push(trId);
+        user.karmaPoints = user.karmaPoints + 1;
       }
       user.save();
       cb(true, numVotes);
@@ -508,7 +628,7 @@ app.get('/doVote/:typeVote/:trId', member, function(req, res) {
     if (hasVoted === '0') {
       doVote(typeVote, userId, trId, function(success, numVotes) {
         res.end(JSON.stringify({
-          success: s,
+          success: success,
           numVotes: numVotes
         }));
       });
@@ -537,31 +657,23 @@ app.get('/doVote/:typeVote/:trId', member, function(req, res) {
 
 // CRUD for transcriptions
 
-// List
-app.get('/transcriptions.:format?', member, function(req, res) {
-  Transcription.find().all(function(transcriptions) {
-    switch (req.params.format) {
-      case 'json':
-        res.send(transcriptions.map(function(t) {
-          return d.__doc;
-        }));
-        break;
-      default:
-        res.render('transcriptions/index.jade');
-        break;
-    }
-  });
-});
-
 // Create
-app.post('/transcriptions.:format?', member, function(req, res) {
+app.post('/transcriptions.:format?', function(req, res) {
   var transcription = new Transcription(req.body.transcription);
+  console.log(transcription);
+
+  // Check params, sanitize
+  var paramsToCheck = ['title', 'artist', 'album'];
+  paramsToCheck.forEach(function(v) {
+    console.log(v, transcription[v]);
+    check(transcription[v], 'Invalid ' + v + '!').notEmpty().len(3, 64);
+  });
+  transcription.description = req.sanitize(transcription.description).xss();
   var file = req.files.transcription.file;
   if (path.extname(file.name) !== '.pdf') {
     throw new Error('Only pdf documents are allowed');
   }
   var foundNewFileName = function(fileLoc) {
-    console.log("found good file name", file.path, fileLoc);
     //fs.chmod(file.path, '0664', function(err) {
     fs.rename(
       file.path,
@@ -610,24 +722,52 @@ app.get('/transcriptions/new', member, function(req, res) {
 });
 
 // Read
-app.get('/transcriptions/:id.:format?', member, function(req, res) {
+var trDisplayFile = fs.readFileSync('./views/transcriptionDisplay.jade');
+var trDisplayTemple = jade.compile(trDisplayFile.toString('utf8'));
+
+app.get('/getTranscription/:id', member, function(req, res) {
   Transcription.findById(req.params.id, function(err, t) {
-    switch (req.params.format) {
-    case 'json':
-      res.render('404');
-      break;
-    case 'html':
-      res.render('transcriptionDisplay', {
-        locals: {
-          t: t
-        },
-        layout: ''
-      });
-      break;
-    default:
-      res.render('404');
-      break;
+    var html = trDisplayTemple({
+      t: t
+    });
+    res.json({
+      url: '/transcriptions/' + req.params.id,
+      html: html
+    });
+  });
+});
+
+var bountyDisplayFile = fs.readFileSync('./views/bountyDisplay.jade');
+var bountyDisplayTemple = jade.compile(bountyDisplayFile.toString('utf8'));
+
+app.get('/getBounty/:id', member, function(req, res) {
+  Bounty.findById(req.params.id, function(err, b) {
+    var html = bountyDisplayTemple({
+      b: b
+    });
+    res.json({
+      url: '/bounty/' + req.params.id,
+      html: html
+    });
+  });
+});
+
+app.post('/transcriptions/:id', member, function(req, res) {
+  res.redirect('/transcriptions/' + req.params.id);
+});
+
+app.get('/transcriptions/:id', member, function(req, res) {
+  Transcription.findById(req.params.id, function(err, t) {
+    if (err) {
+      throw new Error(err);
     }
+    res.render('transcriptions', {
+      locals: {
+        searchItems: [t],
+        search: {},
+        type: 'transcriptions'
+      }
+    });
   });
 });
 
@@ -678,6 +818,15 @@ app.get('/search', member, function(req, res) {
     }
   });
 });
+app.get('/bounty', member, function(req, res) {
+  res.render('transcriptions', {
+    locals: {
+      searchItems: [],
+      search: {},
+      type: 'bounty'
+    }
+  });
+});
 
 // Can be a search for transcriptions or bounties
 // for transcriptions, can be:
@@ -704,12 +853,19 @@ app.post('/search', member, function(req, res) {
     var re = new RegExp(search, 'i');
     return re;
   }
+
+  var type;
+  if (search.type === 'transcriptions') {
+    type = Transcription;
+  } else {
+    type = Bounty;
+  }
   if (search) {
     var title = makeReg(search.title);
     var artist = makeReg(search.artist);
     console.log(artist);
     var album  = makeReg(search.album);
-    Transcription
+    type
       .where('title', title)
       .where('artist', artist)
       .where('album', album)
@@ -719,11 +875,11 @@ app.post('/search', member, function(req, res) {
     search = req.body.searchAll;
     if (search === '') {
       console.log('empty');
-      Transcription.find()
+      type.find()
       .sort('votes', -1)
       .execFind(gotTrs);
     } else {
-      Transcription
+      type
         .$where('(/' + search + '/i).test(this.title)' +
           ' || (/' + search + '/i).test(this.artist)' +
           ' || (/' + search + '/i).test(this.album)')

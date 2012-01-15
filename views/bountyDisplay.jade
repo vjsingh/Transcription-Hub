@@ -1,7 +1,39 @@
-ul
-  .display-title
-    = b.title
-  .display-artist
-    = b.artist
-  .display-album
-    = b.album
+script(type='text/javascript', src='/javascripts/forms.js')
+
+ul.bounty-display
+  .display-points
+    = b.points
+    .display-points-text
+      | Karma Notes
+  h5.bounty-display-info
+    .display-title
+      = b.title
+    .display-artist
+      = b.artist
+    .display-album
+      = b.album
+  .bountyInfoAddForm
+    form#addBounty(method='post', action='/addToBounty/')
+      fieldset
+        input.jqueryHide(type='text', name='bountyId', value=b.id)
+        .clearfix
+          // required b/c of 'parent().parent()' in forms.js
+          .input2
+            input.required(name='bounty[points]', placeholder='Points to add to bounty', type='number', min=1, remote='/checkPoints/')
+      actions
+        input.btn.primary(type='submit', value='Add to Bounty')
+  .fillRequest
+    | Fill Request (
+    a#fillRequestInfo.inline(href='#', rel='popover', data-content='The Transcription ID is found at the end of the url where you can view the transcription', data-placement='below', title='What is the Transcription ID?')
+      |?
+    |):
+    form.inline(method='post', action='/fillBounty')
+      input.required.xlarge(name='bountyId', type='text', placeholder='Enter your Transcription ID')
+      input.btn.primary(type='submit', value='Submit')
+
+script(type='text/javascript')
+  $(function() {
+    $('#fillRequestInfo').popover().click(function(e) {
+      e.preventDefault();
+    });
+  });

@@ -1,9 +1,34 @@
-h2 User Profile
-
-.profInfo
+.jqueryHide#userId(userId=user.id)
+.profile-info.box-with-shadow.content-box
+  h2 User Profile
   #username
     | Username:
     = user.username
   #email
     | Email:
     = user.email
+  #points
+    | Karma Notes:
+    = user.karmaPoints
+  - if (user.personalWebsite)
+    | Website:
+    = user.personalWebsite
+  #profTranscriptions
+    | Transcriptions:
+    #profTranscriptionData
+      | &nbsp &nbsp Loading...
+  #profBounties
+    | Bounties:
+    #profBountiesData
+      | &nbsp &nbsp Loading...
+
+script(type='text/javascript')
+  $(function() {
+    var userId = $('#userId').attr('userId');
+    $.get('/userTranscriptions/' + userId, function(data) {
+      $('#profTranscriptionData').html(data.html);
+    });
+    $.get('/userBounties/' + userId, function(data) {
+      $('#profBountiesData').html(data.html);
+    });
+  });

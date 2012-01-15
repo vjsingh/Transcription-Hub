@@ -3,8 +3,8 @@
 .jqueryHide(type='hidden', id='trId', trId=t.id)
 
 .row
-  .span6
-    .row
+  .span6.trDisplay
+    .row.trDisplayInfo
       .span1
         .votesArrows(class=t.id)
           a#upVote(title="Good Transcription!", href='#')
@@ -22,13 +22,24 @@
             = t.artist
           .display-album
             = t.album
-    br
-    = t.description
-  .span4
-    - pdfUrl = 'transcriptionPdf/false/' + t.fileLocation
-    - pdfUrlDownload = 'transcriptionPdf/true/' + t.fileLocation
+    #uploadedByUsername
+      | Uploaded by:
+      a#uploadedByUsernameLink.jqueryHide(userId=t.userId, href='#')
+    - if (t.description != '')
+      .trDescription
+        blockquote
+          p
+            = t.description
+          small#trAuthor.jqueryHide
+    .trComments
+      .fb-comments(data-href="http://transcription-hub.com", data-num-posts="2", data-width="340")
+  .span6
+    - pdfUrl = '/transcriptionPdf/false/' + t.fileLocation
+    - pdfUrlDownload = '/transcriptionPdf/true/' + t.fileLocation
 
-    iframe(src=pdfUrl, width='500px', height='500px')
+    //iframe(src=pdfUrl, width='100%', height='100%')
+    //iframe#trPdf(src=pdfUrl)
+    iframe#trPdf(src=pdfUrl, width='500px', height='600px')
       You have a very old browser so we can't show you the transcription here, please upgrade to Google Chrome or Firefox!
     p
       a(href=pdfUrlDownload) Download Transcription
@@ -60,4 +71,36 @@ script(type='text/javascript')
     doOnClick('#downVote', '1');
 
     $('.jqueryHide').hide();
+
+    // Get username from userid
+    var userId = $('#uploadedByUsernameLink').attr('userId');
+    function invalidUser() {
+      $('#uploadedByUsername').html("Uploaded by: Not sure! Something went wrong");
+    }
+    if (!userId) {
+      invalidUser();
+    } else {
+      $.get('/getUsername/' + userId, function (str) {
+        if (str && str.length) {
+          $('#uploadedByUsernameLink').attr('href', '/user/' + userId);
+          $('#uploadedByUsernameLink').html(str);
+          $('#uploadedByUsernameLink').show();
+          $('#trAuthor').html(str);
+          $('#trAuthor').show();
+        } else {
+          invalidUser();
+        }
+      });
+    }
+
+    // Huge hack for twitter bootstrap:
+    // Sidebar only works when position: absolute, didn't want
+    // to figure out why. Instead, make the container
+    // that the sidebar is in fit the size of the
+    // sidebar
+    //$('.trEntire').height($('.sidebar').height());
+    $(window).resize(function() {
+      //$('.sidebarContainer').height($('.sidebar').height());
+      //$('.sidebar').height($('.sidebarContainer').height());
+    })
   });

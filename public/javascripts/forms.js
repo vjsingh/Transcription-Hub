@@ -60,10 +60,20 @@ $(function () {
               }
             }
           },
+          // Duplicated twice
           newBounty: {
             messages: {
               'bounty[points]': {
-                min: 'Must commit at least 1 point'
+                min: 'Must commit at least 1 point',
+                remote: "You don't have that many points!"
+              }
+            }
+          },
+          addBounty: {
+            messages: {
+              'bounty[points]': {
+                min: 'Must commit at least 1 point',
+                remote: "You don't have that many points!"
               }
             }
           }
@@ -71,6 +81,13 @@ $(function () {
         var formId = form.attr('id');
         var specialArgs = specialArgsObj[formId] || {};
         specialArgs.checkErrorLabelOr = specialArgs.checkErrorLabelOr || function() {return false;};
+
+        // Register submits so we can show error on click
+        form.click(function(e) {
+          form.addClass('hasBeenSubmitted');
+          form.validate();
+        });
+
 
         form
             .validate({
@@ -82,6 +99,7 @@ $(function () {
               errorPlacement: function(err, element) {
                 // Only markup if not empty
                 if ($(element).val() !== '' ||
+                  form.hasClass('hasBeenSubmitted') ||
                   specialArgs.checkErrorLabelOr()) {
                   remove_validation_markup($(element));
                   add_validation_markup($(element), 'error', err.html());

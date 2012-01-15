@@ -1,0 +1,9 @@
+- for (var bIndex in bounties)
+  - b = bounties[bIndex]
+  a.bounty(href='/bounty/' + b.id)
+    = b.points
+    | &nbsp
+    = t.title
+    |  by
+    = t.artist
+  br

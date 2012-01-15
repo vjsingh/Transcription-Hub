@@ -3,20 +3,33 @@
 - scripts.push('/javascripts/jquery.jscrollpane.min.js')
 - scripts.push('/javascripts/jquery.mousewheel.js')
 //script(type='text/javascript', src='/javascripts/mwheelIntent.js')
-.container-fluid
-  .sidebar
+.container-fluid.sidebarContainer
+  .sidebar.box-with-shadow
     .well
+      //-
+        !=partial('searchPartial', {
+          locals: {
+            type: type,
+            searchItems: searchItems,
+            search: search
+          }
+        })
+        | adsf
       - if (type === 'transcriptions')
         h5 Search Transcriptions
       - else
+        a.btn.primary(href='/createBounty/') + &nbsp   Create Bounty
         h5 Search Bounties
       form#searchSidebar(method='post', action='/search')
         input(type='text', name='search[title]', placeholder='Title', value=search.title || "")
         input(type='text', name='search[artist]', placeholder='Artist', value=search.artist || "")
         input(type='text', name='search[album]', placeholder='Album', value=search.album || "")
         //input.hidden(type='text', name='search[type]', value={type})
-        input#searchType(type='text', name='search[type]', value='transcriptions')
-        input#searchSidebarSubmit(type='submit', value='Search')
+        - if (type === 'transcriptions')
+          input#searchType.jqueryHide(type='text', name='search[type]', value='transcriptions')
+        - else
+          input#searchType.jqueryHide(type='text', name='search[type]', value='bounty')
+        input.btn.primary#searchSidebarSubmit(type='submit', value='Search')
 
       // Pass numSearchItems to javascripts script
       // in a hacky way
@@ -27,9 +40,9 @@
           - divName = 'search' + sIndex
           - s = searchItems[sIndex]
           - if (type === 'transcriptions')
-            - ajaxUrl = '/transcriptions/' + s.id + '.html'
+            - ajaxUrl = '/getTranscription/' + s.id
           - else
-            - ajaxUrl = '/bounty/' + s.id + '.html'
+            - ajaxUrl = '/getBounty/' + s.id
           div(id=divName, ajaxUrl=ajaxUrl, sId=s.id).row.search-box.btn
             .row
               .span-one-half
@@ -40,7 +53,8 @@
                       = s.votes
                     img.downVoteImg(src='/images/arrow2.png')
                 - else
-                  | Tiadjisad bounty
+                  .numPointsBountySearch
+                    = s.points
               .span-one-half
                 .search-result-fields
                   .search-title
@@ -50,7 +64,7 @@
                   .search-album
                     = s.album
           br
-  .content
+  .content.box-with-shadow.content-box
     #search-display
       - if (searchItems.length > 0)
         - if (type === 'transcriptions')
@@ -59,25 +73,26 @@
           !=partial('bountyDisplay', {locals: { b: searchItems[0] }})
 
   //var numTranscriptions = $('#numTranscriptions').val();
-  - numSearchItems = searchItems.length
-  - var trId = 1;
-  - for (var i = 0; i < numSearchItems; i++) {
-    != '<script type="text/javascript">'
-    != "$('#search' + "
-    != i
-    != ").click(function() {"
-      - if (type === 'transcriptions')
-        != "$.get('/transcriptions/' + '"
-      - else
-        != "$.get('/bounty/' + '"
-      != searchItems[i].id
-      != "' + '.html',"
-      != "function(html) {$('#search-display').html(html);},"
-      != "'html'"
-      != ");"
-    != '});'
-    != '</script>'
-  - }
+  //
+    - numSearchItems = searchItems.length
+    - var trId = 1;
+    - for (var i = 0; i < numSearchItems; i++) {
+      != '<script type="text/javascript">'
+      != "$('#search' + "
+      != i
+      != ").click(function() {"
+        - if (type === 'transcriptions')
+          != "$.get('/transcriptions/' + '"
+        - else
+          != "$.get('/bounty/' + '"
+        != searchItems[i].id
+        != "' + '.html',"
+        != "function(html) {$('#search-display').html(html);},"
+        != "'html'"
+        != ");"
+      != '});'
+      != '</script>'
+    - }
 
 script(type='text/javascript')
   function setVoteArrowColors(type, trId) {
@@ -91,10 +106,15 @@ script(type='text/javascript')
       $('.' + trId + ' .upVoteImg').attr('src', "/images/selectedArrowUp.png");
     }
   }
+  (function(d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) return;
+    js = d.createElement(s); js.id = id;
+    js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&appId=278190265572756";
+    fjs.parentNode.insertBefore(js, fjs);
+  }(document, 'script', 'facebook-jssdk'));
   $(function() {
     $('#search0').addClass('active');
-    $('#searchType').hide();
-
 
     $('.search-box').each(function(index, elem) {
       var trId = $(this).attr('sId');
@@ -108,11 +128,27 @@ script(type='text/javascript')
     });
     $('.search-box').click(function() {
       var ajaxUrl = $(this).attr('ajaxUrl');
-      $.get(ajaxUrl, function(html) {
-        $('#search-display').html(html);
-      });
+      var buttonId = '#' + $(this).attr('id');
+      // Only update if doing something
+      if (!$(this).hasClass('active')) {
+        $.get(ajaxUrl, function(obj) {
+          $('.search-box').removeClass('active');
+          $(buttonId).addClass('active');
+          $('#search-display').html(obj.html);
+          var stateObj = {
+            selectedButtonId: buttonId
+          }
+          history.pushState(stateObj, 'asff', obj.url);
+          $('.jqueryHide').hide();
+        });
+      }
     });
-    // use jScrollPane for search scroll pane
+    window.onpopstate = function(e) {
+      if (e && e.state && e.state.selectedButtonId) {
+        $(e.state.selectedButtonId).click();
+      }
+    }
 
+    // use jScrollPane for search scroll pane
     $('.search-pane').jScrollPane({showArrows: true});
   });

@@ -17,7 +17,7 @@ form#uploadForm(method='post', enctype="multipart/form-data", action='/transcrip
     .clearfix
       label Album
       .input
-        input(name='transcription[album]', value='', type='text')
+        input.required(name='transcription[album]', value='', type='text')
     .clearfix
       label Description
       .input

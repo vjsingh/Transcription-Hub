@@ -32,6 +32,11 @@ function defineModels(mongoose, fn) {
 
   Transcription.pre('save', function(next) {
     this.votes = this.upVotes - this.downVotes;
+    // Collapse if only whitespace
+    if (!(/\S/.test(this.description))) {
+      // string is all whitespace
+      this.description = '';
+    }
     next();
   });
   /*
@@ -58,7 +63,7 @@ function defineModels(mongoose, fn) {
     'upVotes': {type: [String], 'default': []},
     'downVotes': {type: [String], 'default': []},
 
-    'karmaPoints': {type: Number},
+    'karmaPoints': {type: Number, 'default': 0},
     'personalWebsite': {type: String},
     'hashed_password': String,
     'salt': String
@@ -102,6 +107,16 @@ function defineModels(mongoose, fn) {
 
   User.method('encryptPassword', function(password) {
     return crypto.createHmac('sha1', this.salt).update(password).digest('hex');
+  });
+
+  // Never have < 0 karmaPoints
+  User.pre('save', function(next) {
+    console.log('saving user', this.karmaPoints);
+    if (this.karmaPoints < 0) {
+      this.karmaPoints = 0;
+    }
+    console.log('after:', this.karmaPoints);
+    next();
   });
 
   /*
@@ -154,15 +169,15 @@ function defineModels(mongoose, fn) {
     */
 
   Bounty = new Schema({
-    'hasUploaded': {type: Boolean},
-    'fulfilled': {type: Boolean},
-    'transcriptionId': { type: String, index: { unique: true } },
-    'numPoints': {type: Number},
+    'hasUploaded': {type: Boolean, 'default': false},
+    'fulfilled': {type: Boolean, 'default':false},
+    'transcriptionId': { type: String},
+    'points': {type: Number},
     'title': {type: String, index: true},
     'album': {type: String, index: true},
     'artist': {type: String, index: true},
     'description': {type: String},
-    'userId': {type: ObjectId, index: true, unique:true}
+    'userId': {type: ObjectId, index: true}
   });
 
   Bounty.virtual('id')

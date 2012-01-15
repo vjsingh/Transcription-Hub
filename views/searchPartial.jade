@@ -1,0 +1,45 @@
+- if (type === 'transcriptions')
+  h5 Search Transcriptions
+- else
+  a.btn.primary(href='/createBounty/') Create Bounty
+  h5 Search Bounties
+form#searchSidebar(method='post', action='/search')
+  input(type='text', name='search[title]', placeholder='Title', value=search.title || "")
+  input(type='text', name='search[artist]', placeholder='Artist', value=search.artist || "")
+  input(type='text', name='search[album]', placeholder='Album', value=search.album || "")
+  //input.hidden(type='text', name='search[type]', value={type})
+  input#searchType(type='text', name='search[type]', value='transcriptions')
+  input#searchSidebarSubmit(type='submit', value='Search')
+
+// Pass numSearchItems to javascripts script
+// in a hacky way
+- numSearchItems = searchItems.length
+input(type='hidden', id='numSearchItems', value=numSearchItems)
+.search-pane
+  - for (var sIndex in searchItems)
+    - divName = 'search' + sIndex
+    - s = searchItems[sIndex]
+    - if (type === 'transcriptions')
+      - ajaxUrl = '/transcriptions/' + s.id + '.html'
+    - else
+      - ajaxUrl = '/bounty/' + s.id + '.html'
+    div(id=divName, ajaxUrl=ajaxUrl, sId=s.id).row.search-box.btn
+      .row
+        .span-one-half
+          - if (type === 'transcriptions')
+            .votesArrows(class=searchItems[sIndex].id)
+              img.upVoteImg(src='/images/arrow2Up.png')
+              .numKarmaSearch.numVotes
+                = s.votes
+              img.downVoteImg(src='/images/arrow2.png')
+          - else
+            | Tiadjisad bounty
+        .span-one-half
+          .search-result-fields
+            .search-title
+              = s.title
+            .search-artist
+              = s.artist
+            .search-album
+              = s.album
+    br
