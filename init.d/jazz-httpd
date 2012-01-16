@@ -73,7 +73,7 @@ do_start() {
   start-stop-daemon --start --quiet --pidfile $PIDFILE \
                     --exec $SUPERVISOR --test > /dev/null
   STATUS="$?"
-  if [ "$STATUS" = "1" ]; then
+  if [ "$STATUS" = "0" ]; then
     start-stop-daemon --start --quiet --pidfile $PIDFILE \
                       --exec $SUPERVISOR --chuid $USER:$GROUP -- \
                       $SUPERVISOR_ARGS \
