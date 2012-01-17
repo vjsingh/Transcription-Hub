@@ -27,6 +27,14 @@ function puts(error, stdout, stderr) { sys.puts(stdout) }
 var IS_LOCAL_MACHINE = siteConf.isLocal;
 var TRANSCRIPTION_FILE_DIR = '/mongodb/transcriptions/';
 
+var serverDir;
+if (IS_LOCAL_MACHINE) {
+  serverDir = '/Users/Varun/Documents/workspace/jazz/jazz/';
+} else {
+  serverDir = '/var/jazz/';
+}
+process.chdir(serverDir);
+
 app.configure(function(){
   app.set('views', __dirname + '/views');
   app.set('view engine', 'jade');
