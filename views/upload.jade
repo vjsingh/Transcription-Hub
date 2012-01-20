@@ -19,9 +19,13 @@ form#uploadForm(method='post', enctype="multipart/form-data", action='/transcrip
       .input
         input.required(name='transcription[album]', value='', type='text')
     .clearfix
+      label Instrument
+      .input
+        input.required(name='transcription[instrument]', value='', type='text')
+    .clearfix
       label Description
       .input
-       textarea(name='transcription[description]')=''
+       textarea(name='transcription[description]')
     .clearfix
       label File (PDF)
       .input

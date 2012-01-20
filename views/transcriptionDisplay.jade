@@ -22,6 +22,10 @@
             = t.artist
           .display-album
             = t.album
+    .display-instrument
+      | Instrument:
+      = (t.instrument || 'Not specified')
+    br
     #uploadedByUsername
       | Uploaded by:
       a#uploadedByUsernameLink.jqueryHide(userId=t.userId, href='#')
