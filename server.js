@@ -106,6 +106,7 @@ app.configure('test', function() {
 // Error
 app.error(function(err, req, res, next) {
   console.log("ZQX GOT ERROR, in app.error");
+  console.log(err);
   res.render('500.jade', {
     error: err
   });
@@ -714,8 +715,11 @@ app.post('/transcriptions.:format?', function(req, res) {
         }
         transcription.fileLocation = path.basename(newFileLoc);
         transcription.userId = req.currentUser.id;
-        transcription.save(function() {
-          res.redirect('/search');
+        transcription.save(function(err) {
+          if (err) {
+            throw new Error(err);
+          }
+          res.redirect('/transcriptions/' + transcription.id);
         });
       }
     );
