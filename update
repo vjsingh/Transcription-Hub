@@ -23,6 +23,7 @@ fi
 sudo -Hu www-data git submodule update --init
 
 if [ "$1" == "restart" ]; then
-  [ -f /etc/init.d/jazz-httpd ] && invoke-rc.d jazz-httpd restart
-  [ -f /etc/init.d/jazz-processor ] && invoke-rc.d jazz-processor restart
+  sudo initctl reload-configuration
+  sudo restart jazz
 fi
+
