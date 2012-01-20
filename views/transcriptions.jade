@@ -45,7 +45,7 @@
             - ajaxUrl = '/getBounty/' + s.id
           div(id=divName, ajaxUrl=ajaxUrl, sId=s.id).row.search-box.btn
             .row
-              .span-one-half
+              .span
                 - if (type === 'transcriptions')
                   .votesArrows(class=searchItems[sIndex].id)
                     img.upVoteImg(src='/images/arrow2Up.png')
@@ -55,7 +55,7 @@
                 - else
                   .numPointsBountySearch
                     = s.points
-              .span-one-half
+              .span
                 .search-result-fields
                   .search-title
                     = s.title

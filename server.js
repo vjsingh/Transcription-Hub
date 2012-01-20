@@ -105,6 +105,7 @@ app.configure('test', function() {
 
 // Error
 app.error(function(err, req, res, next) {
+  console.log("ZQX GOT ERROR, in app.error");
   res.render('500.jade', {
     error: err
   });
@@ -286,6 +287,21 @@ app.post('/fillBounty', function(req, res) {
 // Users
 app.get('/profile', member, function(req, res) {
   res.render('profile');
+});
+
+app.get('/user/:userId', member, function(req, res) {
+  User.findById(req.currentUser.id, function(err, user) {
+    if (err) {
+      throw new Error(err);
+    }
+
+    // This is duplicated in '/profile' above
+    res.render('profile', {
+      locals: {
+        user: user
+      }
+    });
+  });
 });
 
 app.get('/register', function(req, res) {
