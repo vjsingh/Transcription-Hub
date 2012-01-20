@@ -23,7 +23,8 @@ fi
 sudo -Hu www-data git submodule update --init
 
 if [ "$1" == "restart" ]; then
+  sudo stop jazz
   sudo initctl reload-configuration
-  sudo restart jazz
+  sudo start jazz
 fi
 
