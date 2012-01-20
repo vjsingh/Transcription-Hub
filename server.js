@@ -19,7 +19,7 @@ var express = require('express'),
   Transcription, User, LoginToken, Bounty;
   //routes = require('./routes')
 
-var sys = require('sys');
+var sys = require('util');
 var exec = require('child_process').exec;
 function puts(error, stdout, stderr) { sys.puts(stdout) }
 
@@ -692,7 +692,13 @@ app.post('/transcriptions.:format?', function(req, res) {
     console.log(v, transcription[v]);
     check(transcription[v], 'Invalid ' + v + '!').notEmpty().len(3, 64);
   });
-  transcription.description = req.sanitize(transcription.description).xss();
+
+  // sanitize description for xss
+  var oldDescription = transcription.description;
+  transcription.description = sanitize(transcription.description).xss();
+  if (oldDescription !== transcription.description) {
+    console.log('ZQX XSS ATTACK!: ' + req.currentUser.id + ' ' + oldDescription + ' ' + transcription.description);
+  }
   var file = req.files.transcription.file;
   if (path.extname(file.name) !== '.pdf') {
     throw new Error('Only pdf documents are allowed');
@@ -703,7 +709,6 @@ app.post('/transcriptions.:format?', function(req, res) {
       file.path,
       fileLoc,
       function(err) {
-        console.log('error', err);
         if (err) {
           throw new Error(err);
         }
@@ -720,7 +725,6 @@ app.post('/transcriptions.:format?', function(req, res) {
   // thats not already there. Append increasing numbers till we get there
   var recurCheckFileName = function(fileLoc, addition, isFirstTime) {
     return function(exists) {
-      console.log('r', exists, fileLoc);
       if (!exists) {
         foundNewFileName(fileLoc);
       } else {
@@ -858,7 +862,6 @@ app.get('/bounty', member, function(req, res) {
 //    Set of strings that should match all fields
 app.post('/search', member, function(req, res) {
   var search = req.body.search;
-  console.log(search);
 
   // Bastardized to also take bounties
   function gotTrs(err, trs) {
@@ -887,7 +890,6 @@ app.post('/search', member, function(req, res) {
   if (search) {
     var title = makeReg(search.title);
     var artist = makeReg(search.artist);
-    console.log(artist);
     var album  = makeReg(search.album);
     type
       .where('title', title)
@@ -898,7 +900,6 @@ app.post('/search', member, function(req, res) {
   } else { // search all fields
     search = req.body.searchAll;
     if (search === '') {
-      console.log('empty');
       type.find()
       .sort('votes', -1)
       .execFind(gotTrs);
