@@ -698,6 +698,12 @@ app.get('/doVote/:typeVote/:trId', member, function(req, res) {
 
 // Create
 app.post('/transcriptions.:format?', function(req, res) {
+  // Can post with either a url or a pdf
+  var isFilePost = false;
+  var file = req.files.transcription.file;
+  if (file && file.name) {
+    isFilePost = true;
+  }
   var transcription = new Transcription(req.body.transcription);
   console.log(transcription);
 
@@ -714,51 +720,57 @@ app.post('/transcriptions.:format?', function(req, res) {
   if (oldDescription !== transcription.description) {
     console.log('ZQX XSS ATTACK!: ' + req.currentUser.id + ' ' + oldDescription + ' ' + transcription.description);
   }
-  var file = req.files.transcription.file;
-  if (path.extname(file.name) !== '.pdf') {
+  if (isFilePost && path.extname(file.name) !== '.pdf') {
     throw new Error('Only pdf documents are allowed');
   }
-  var foundNewFileName = function(fileLoc) {
-    //fs.chmod(file.path, '0664', function(err) {
-    fs.rename(
-      file.path,
-      fileLoc,
-      function(err) {
-        if (err) {
-          throw new Error(err);
-        }
-        transcription.fileLocation = path.basename(newFileLoc);
-        transcription.userId = req.currentUser.id;
-        transcription.save(function(err) {
+  function addTranscription(transcription) {
+    transcription.userId = req.currentUser.id;
+    transcription.save(function(err) {
+      if (err) {
+        throw new Error(err);
+      }
+      res.redirect('/transcriptions/' + transcription.id);
+    });
+  }
+  if (!isFilePost) {
+    addTranscription(transcription);
+  } else {
+    var foundNewFileName = function(fileLoc) {
+      //fs.chmod(file.path, '0664', function(err) {
+      fs.rename(
+        file.path,
+        fileLoc,
+        function(err) {
           if (err) {
             throw new Error(err);
           }
-          res.redirect('/transcriptions/' + transcription.id);
-        });
-      }
-    );
-    //});
-  };
-  // some fun recursive functions to recur asynchronously until we find a filename
-  // thats not already there. Append increasing numbers till we get there
-  var recurCheckFileName = function(fileLoc, addition, isFirstTime) {
-    return function(exists) {
-      if (!exists) {
-        foundNewFileName(fileLoc);
-      } else {
-        fileLoc = path.dirname(fileLoc) + '/' + path.basename(fileLoc, '.pdf');
-        if (!isFirstTime) {
-          fileLoc = fileLoc.substring(0, fileLoc.length-( (String(addition-1)).length));
+          transcription.fileLocation = path.basename(fileLoc);
+          addTranscription(transcription);
         }
-        fileLoc = fileLoc + addition + '.pdf';
-        path.exists(fileLoc, recurCheckFileName(fileLoc, addition + 1, false));
-      }
+      );
+      //});
     };
-  };
+    // some fun recursive functions to recur asynchronously until we find a filename
+    // thats not already there. Append increasing numbers till we get there
+    var recurCheckFileName = function(fileLoc, addition, isFirstTime) {
+      return function(exists) {
+        if (!exists) {
+          foundNewFileName(fileLoc);
+        } else {
+          fileLoc = path.dirname(fileLoc) + '/' + path.basename(fileLoc, '.pdf');
+          if (!isFirstTime) {
+            fileLoc = fileLoc.substring(0, fileLoc.length-( (String(addition-1)).length));
+          }
+          fileLoc = fileLoc + addition + '.pdf';
+          path.exists(fileLoc, recurCheckFileName(fileLoc, addition + 1, false));
+        }
+      };
+    };
 
-  var newFileLoc = TRANSCRIPTION_FILE_DIR + file.name;
-  var addition = 2;
-  path.exists(newFileLoc, recurCheckFileName(newFileLoc, addition, true));
+    var newFileLoc = TRANSCRIPTION_FILE_DIR + file.name;
+    var addition = 2;
+    path.exists(newFileLoc, recurCheckFileName(newFileLoc, addition, true));
+  }
 });
 
 app.get('/transcriptions/new', member, function(req, res) {
@@ -772,7 +784,9 @@ var trDisplayFile = fs.readFileSync('./views/transcriptionDisplay.jade');
 var trDisplayTemple = jade.compile(trDisplayFile.toString('utf8'));
 
 app.get('/getTranscription/:id', member, function(req, res) {
+  console.log('asd');
   Transcription.findById(req.params.id, function(err, t) {
+    console.log(t);
     var html = trDisplayTemple({
       t: t
     });

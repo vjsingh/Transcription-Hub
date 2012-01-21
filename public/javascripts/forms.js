@@ -3,6 +3,19 @@ $(function () {
     $.validator.addMethod('loginRegex', function(val, element) {
       return this.optional(element) || /^[a-zA-Z0-9]+$/i.test(val);
     }, "Username must contain only letters and numbers");
+
+    // Add functionality to complete at least one field in a group
+    // modified from stackoverflow:
+    // http://stackoverflow.com/questions/1300994/jquery-validate-require-at-least-one-field-in-a-group-to-be-filled
+    $.validator.addMethod('fillone', function(val, elem, options) {
+      var numRequired = 1;
+      var selector = '.fillone';
+      var validOrNot = $(selector).filter(function() {
+        return $(this).attr('value');
+      }).length >= numRequired;
+      return validOrNot;
+    }, $.format('Please fill out at least 1 of these fields'));
+
     function find_container(input) {
         return input.parent().parent();
         //return input.parent();
@@ -57,6 +70,9 @@ $(function () {
             messages: {
               'transcription[file]': {
                 accept: 'Only PDF documents are allowed'
+              },
+              'transcription[url]': {
+                url: "Please enter a valid URL (beginning with 'http://www.')"
               }
             }
           },

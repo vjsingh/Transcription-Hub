@@ -20,6 +20,7 @@ function defineModels(mongoose, fn) {
     'instrument': {type: String, index: true, 'default': 'Not Specified'},
     'description': {type: String},
     'fileLocation': {type: String},
+    'url': {type: String},
     'upVotes': {type: Number, 'default': 0, set: changeNumVotes},
     'downVotes': {type: Number, 'default': 0, set: changeNumVotes},
     'votes': {type: Number},

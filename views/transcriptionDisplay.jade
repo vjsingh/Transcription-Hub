@@ -38,15 +38,21 @@
     .trComments
       .fb-comments(data-href="http://transcription-hub.com", data-num-posts="2", data-width="340")
   .span6
-    - pdfUrl = '/transcriptionPdf/false/' + t.fileLocation
-    - pdfUrlDownload = '/transcriptionPdf/true/' + t.fileLocation
+    - if (t.fileLocation)
+      - pdfUrl = '/transcriptionPdf/false/' + t.fileLocation
+      - pdfUrlDownload = '/transcriptionPdf/true/' + t.fileLocation
 
-    //iframe(src=pdfUrl, width='100%', height='100%')
-    //iframe#trPdf(src=pdfUrl)
-    iframe#trPdf(src=pdfUrl, width='500px', height='600px')
-      You have a very old browser so we can't show you the transcription here, please upgrade to Google Chrome or Firefox!
-    p
-      a(href=pdfUrlDownload) Download Transcription
+      //iframe(src=pdfUrl, width='100%', height='100%')
+      //iframe#trPdf(src=pdfUrl)
+      iframe#trPdf(src=pdfUrl, width='500px', height='600px')
+        You have a very old browser so we can't show you the transcription here, please upgrade to Google Chrome or Firefox!
+      p
+        a(href=pdfUrlDownload) Download Transcription
+    - else
+      h2
+        | Transcription:
+      a(href=t.url)
+        = t.url
 
 script(type='text/javascript')
   $(function() {
