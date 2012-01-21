@@ -9,7 +9,7 @@ var express = require('express'),
   sanitize = require('validator').sanitize,
   app = module.exports = express.createServer(),
   mongoose = require('mongoose'),
-  mongoStore = require('connect-mongodb'),
+  mongoStore = require('connect-mongo'),
   models = require('./models'),
   stylus = require('stylus'),
   siteConf = require('./lib/getConfig'),
@@ -36,6 +36,7 @@ if (IS_LOCAL_MACHINE) {
 process.chdir(serverDir);
 
 app.configure(function(){
+  app.set('db-uri', 'mongodb://localhost/' + siteConf.dbName);
   app.set('views', __dirname + '/views');
   app.set('view engine', 'jade');
   app.set('view options', {pretty: true});
@@ -51,8 +52,12 @@ app.configure(function(){
 
   app.use(express.cookieParser());
   app.use(express.session({
-    store: mongoStore(app.set('db-uri')),
-    secret: siteConf.sessionSecret
+    store: new mongoStore({
+      db: siteConf.dbName,
+      host: 'localhost'
+    }),
+    secret: siteConf.sessionSecret,
+    maxAge: new Date(Date.now() + 3600000)
   }));
   app.use(express.methodOverride());
   app.use(stylus.middleware({
@@ -89,18 +94,15 @@ app.configure('development', function(){
   app.use(express.logger());
   app.use(express.errorHandler({
     dumpExceptions: true, showStack: true }));
-  app.set('db-uri', 'mongodb://localhost/jazz-dev');
 });
 
 app.configure('production', function(){
   app.use(express.logger());
   app.use(express.errorHandler());
-  app.set('db-uri', 'mongodb://localhost/jazz-prod');
 });
 
 app.configure('test', function() {
   app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
-  app.set('db-uri', 'mongodb://localhost/jazz-test');
 });
 
 // Error
