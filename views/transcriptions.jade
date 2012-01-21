@@ -107,6 +107,8 @@ script(type='text/javascript')
       $('.' + trId + ' .upVoteImg').attr('src', "/images/selectedArrowUp.png");
     }
   }
+
+  // Facebook
   (function(d, s, id) {
     var js, fjs = d.getElementsByTagName(s)[0];
     if (d.getElementById(id)) return;
@@ -114,6 +116,7 @@ script(type='text/javascript')
     js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&appId=278190265572756";
     fjs.parentNode.insertBefore(js, fjs);
   }(document, 'script', 'facebook-jssdk'));
+
   $(function() {
     $('#search0').addClass('active');
 
@@ -151,5 +154,5 @@ script(type='text/javascript')
     }
 
     // use jScrollPane for search scroll pane
-    $('.search-pane').jScrollPane({showArrows: true});
+    $('.search-pane').jScrollPane({showArrows: true, autoReinitialise: true});
   });
