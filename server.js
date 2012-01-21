@@ -98,7 +98,7 @@ app.configure('development', function(){
 
 app.configure('production', function(){
   app.use(express.logger());
-  app.use(express.errorHandler());
+  //app.use(express.errorHandler());
 });
 
 app.configure('test', function() {
@@ -191,6 +191,7 @@ console.log("Express server listening on port %d in %s mode", app.address().port
 // Routes
 
 app.get('/svg', function(req, res) {
+  throw new Error('fake error!');
   res.render('svg', {layout: ''});
 });
 app.get('/', function(req, res) {
@@ -283,8 +284,11 @@ app.post('/addToBounty', member, function(req, res) {
   });
 });
 
+app.get('/fillBounty', function(req, res) {
+  res.render('unfinished');
+});
 app.post('/fillBounty', function(req, res) {
-  throw new Error('Not yet implemented :(');
+  res.render('unfinished');
 });
 
 // Users
@@ -542,7 +546,6 @@ app.get('/transcriptionPdf/:download/:fileLoc', member, function(req, res) {
       }
       fs.readFile(fileLoc, function(err, pdfData) {
         if (err) {
-          console.log('error finding');
           throw new Error(err);
         }
         res.end(pdfData, 'binary');
