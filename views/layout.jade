@@ -90,7 +90,7 @@ html(class='no-js', lang='en')
               //a.button.btn.primary.pull-left(href="/register") Register
               form.pull-left(method='post', action='/search')
                 input#searchType.jqueryHide(type='text', name='search[type]', value='transcriptions')
-                input(type='text', name='searchAll', placeholder='Enter Artist/Song/Album')
+                input(type='text', name='search[omniSearch]', placeholder='Enter Artist/Song/Album')
                 input(type='submit', style='position: absolute; left: -9999px;') // hide submit button
               .pull-right
                 - if (userLoggedIn)

@@ -880,9 +880,24 @@ app.post('/search', member, function(req, res) {
       }
     });
   }
+
+  // Match one or more words, split by spaces
   function makeReg(search) {
-    var re = new RegExp(search, 'i');
-    return re;
+    if (!search) {
+      return /.?/;
+    }
+    var splitArr = search.split(' ');
+    var regSearch = '(';
+    var isFirstTime = true;
+    splitArr.forEach(function(word) {
+      if (!isFirstTime) {
+        regSearch += '|';
+      }
+      regSearch += word;
+      isFirstTime = false;
+    });
+    regSearch += ')+';
+    return new RegExp(regSearch, 'i');
   }
 
   var type;
@@ -891,27 +906,30 @@ app.post('/search', member, function(req, res) {
   } else {
     type = Bounty;
   }
-  if (search) {
+  if (search.omniSearch !== '' && !search.omniSearch) {
     var title = makeReg(search.title);
     var artist = makeReg(search.artist);
     var album  = makeReg(search.album);
+    var instrument  = makeReg(search.instrument);
     type
       .where('title', title)
       .where('artist', artist)
       .where('album', album)
+      .where('instrument', instrument)
       .sort('votes', -1)
       .execFind(gotTrs);
   } else { // search all fields
-    search = req.body.searchAll;
+    search = search.omniSearch;
     if (search === '') {
       type.find()
       .sort('votes', -1)
       .execFind(gotTrs);
     } else {
+      search = makeReg(search);
       type
-        .$where('(/' + search + '/i).test(this.title)' +
-          ' || (/' + search + '/i).test(this.artist)' +
-          ' || (/' + search + '/i).test(this.album)')
+        .$where('(' + search + ').test(this.title)' +
+          ' || (' + search + ').test(this.artist)' +
+          ' || (' + search + ').test(this.album)')
         .sort('votes', -1)
         .execFind(gotTrs);
     }

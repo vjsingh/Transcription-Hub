@@ -24,6 +24,7 @@
         input(type='text', name='search[title]', placeholder='Title', value=search.title || "")
         input(type='text', name='search[artist]', placeholder='Artist', value=search.artist || "")
         input(type='text', name='search[album]', placeholder='Album', value=search.album || "")
+        input(type='text', name='search[instrument]', placeholder='Instrument', value=search.instrument || "")
         //input.hidden(type='text', name='search[type]', value={type})
         - if (type === 'transcriptions')
           input#searchType.jqueryHide(type='text', name='search[type]', value='transcriptions')

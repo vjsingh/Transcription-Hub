@@ -1,1 +1,2 @@
-node-dev ./dev/app.dev.js
+cd ./dev
+node-dev app.dev.js
