@@ -47,6 +47,8 @@ app.configure(function(){
   } else {
     fileUploadDir = TRANSCRIPTION_FILE_DIR + 'tmp/';
   }
+
+  app.use(express.favicon(__dirname + '/public/favicon.ico'));
   app.use(express.bodyParser({uploadDir: fileUploadDir}));
   app.use(expressValidator);
 
