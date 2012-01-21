@@ -18,6 +18,10 @@ form#newBounty(method='post', action='/createBounty')
         .input
           input.xlarge.required(id='nbountyAlbum', name='bounty[album]', type='text', placeholder='Album')
       .clearfix
+        label(for='Instrument') Instrument
+        .input
+          input.xlarge.required(id='nbountyInstrument', name='bounty[instrument]', type='text', placeholder='Instrument')
+      .clearfix
         label(for='points') Karma Points
         .input
           input.xlarge.required(id='nbountyPoints', name='bounty[points]', placeholder='Points to add to bounty', type='number', min=1, remote='/checkPoints/')

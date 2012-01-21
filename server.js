@@ -257,7 +257,7 @@ function addToBounty(bounty, points, req, res) {
 app.post('/createBounty', member, function(req, res) {
   var bounty = new Bounty(req.body.bounty);
 
-  // set points to 0 b/c added later
+  // set points to 0 b/c added later in addToBounty
   var points = bounty.points;
   bounty.points = 0;
 
@@ -621,20 +621,28 @@ function doVote(typeVote, userId, trId, cb) {
 
     // can't use tr.votes b/c hasn't saved yet
     numVotes = tr.upVotes - tr.downVotes;
+    trUserId = tr.userId;
     tr.save();
+
     User.findById(userId, function(err, user) {
       if (err) {
         throw new Error(err);
       }
-      if (typeVote === '1') {
-        user.downVotes.push(trId);
-        user.karmaPoints = user.karmaPoints - 1;
-      } else if (typeVote === '2') {
-        user.upVotes.push(trId);
-        user.karmaPoints = user.karmaPoints + 1;
-      }
-      user.save();
-      cb(true, numVotes);
+      User.findById(trUserId, function(err, trUser) {
+        if (err) {
+          throw new Error(err);
+        }
+        if (typeVote === '1') {
+          user.downVotes.push(trId);
+          trUser.karmaPoints = user.karmaPoints - 1;
+        } else if (typeVote === '2') {
+          user.upVotes.push(trId);
+          trUser.karmaPoints = user.karmaPoints + 1;
+        }
+        user.save();
+        trUser.save();
+        cb(true, numVotes);
+      });
     });
   });
 }

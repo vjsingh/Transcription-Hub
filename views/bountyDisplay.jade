@@ -12,6 +12,8 @@ ul.bounty-display
       = b.artist
     .display-album
       = b.album
+  .display-instrument
+    = b.instrument
   .bountyInfoAddForm
     form#addBounty(method='post', action='/addToBounty/')
       fieldset

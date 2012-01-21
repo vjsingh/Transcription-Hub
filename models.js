@@ -177,6 +177,7 @@ function defineModels(mongoose, fn) {
     'title': {type: String, index: true},
     'album': {type: String, index: true},
     'artist': {type: String, index: true},
+    'instrument': {type: String, index: true},
     'description': {type: String},
     'userId': {type: ObjectId, index: true}
   });
