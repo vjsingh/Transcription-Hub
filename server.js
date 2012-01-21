@@ -154,7 +154,7 @@ function authenticateFromLoginToken(req, res, next) {
 //Middleware
 function member(req, res, next) {
   if (!req.currentUser) {
-      res.redirect('/login');
+      res.redirect('/register');
   } else {
     next();
   }
