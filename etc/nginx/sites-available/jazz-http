@@ -5,6 +5,7 @@ upstream app_transcription-hub {
 server {
   listen        80;
   listen        [::]:80 default ipv6only=on;
+  client_max_body_size 4M;
   server_name transcription-hub.com transcription-hub
   access_log    /var/log/nginx/access.log;
   location / {
