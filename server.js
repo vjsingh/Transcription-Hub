@@ -306,7 +306,7 @@ app.get('/user/:userId', member, function(req, res) {
     // This is duplicated in '/profile' above
     res.render('profile', {
       locals: {
-        user: user
+        profileUser: user
       }
     });
   });

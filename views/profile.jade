@@ -1,18 +1,18 @@
-.jqueryHide#userId(userId=user.id)
+.jqueryHide#userId(userId=profileUser.id)
 .profile-info.box-with-shadow.content-box
   h2 User Profile
   #username
     | Username:
-    = user.username
+    = profileUser.username
   #email
     | Email:
-    = user.email
+    = profileUser.email
   #points
     | Karma Notes:
-    = user.karmaPoints
-  - if (user.personalWebsite)
+    = profileUser.karmaPoints
+  - if (profileUser.personalWebsite)
     | Website:
-    = user.personalWebsite
+    = profileUser.personalWebsite
   #profTranscriptions
     | Transcriptions:
     #profTranscriptionData
