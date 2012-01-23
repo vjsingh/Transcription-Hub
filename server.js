@@ -444,7 +444,6 @@ var profileBountyDisplay = fs.readFileSync('./views/userProfileBounties.jade');
 var profileBountyDisplayTemple = jade.compile(profileBountyDisplay.toString('utf8'));
 app.get('/userBounties/:userId', function(req, res) {
   Bounty.find({userId: req.params.userId}, function(err, bounties) {
-    console.log(bounties);
     if (err) {
       throw new Error(err);
     }
@@ -726,12 +725,10 @@ app.post('/transcriptions.:format?', function(req, res) {
     isFilePost = true;
   }
   var transcription = new Transcription(req.body.transcription);
-  console.log(transcription);
 
   // Check params, sanitize
   var paramsToCheck = ['title', 'artist', 'album'];
   paramsToCheck.forEach(function(v) {
-    console.log(v, transcription[v]);
     check(transcription[v], 'Invalid ' + v + '!').notEmpty().len(3, 64);
   });
 
@@ -746,7 +743,6 @@ app.post('/transcriptions.:format?', function(req, res) {
   }
   function addTranscription(transcription) {
     transcription.userId = req.currentUser.id;
-    console.log(Date.now());
     transcription.uploadTime = Date.now();
     transcription.save(function(err) {
       if (err) {
@@ -807,9 +803,7 @@ var trDisplayFile = fs.readFileSync('./views/transcriptionDisplay.jade');
 var trDisplayTemple = jade.compile(trDisplayFile.toString('utf8'));
 
 app.get('/getTranscription/:id', member, function(req, res) {
-  console.log('asd');
   Transcription.findById(req.params.id, function(err, t) {
-    console.log(t);
     var html = trDisplayTemple({
       t: t
     });
