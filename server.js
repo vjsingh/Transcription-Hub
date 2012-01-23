@@ -298,7 +298,7 @@ app.get('/profile', member, function(req, res) {
 });
 
 app.get('/user/:userId', member, function(req, res) {
-  User.findById(req.currentUser.id, function(err, user) {
+  User.findById(req.params.userId, function(err, user) {
     if (err) {
       throw new Error(err);
     }
