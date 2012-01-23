@@ -45,6 +45,9 @@ function defineModels(mongoose, fn) {
     this.votes = this.upVotes - this.downVotes;
 
     // Convert to readable time
+    if (!this.uploadTime) {
+      this.uploadTime = Date.now();
+    }
     this.uploadDateStr = makeReadableTime(this.uploadTime);
     // Collapse if only whitespace
     if (!(/\S/.test(this.description))) {
@@ -128,6 +131,9 @@ function defineModels(mongoose, fn) {
   // Never have < 0 karmaPoints
   User.pre('save', function(next) {
     // Convert to readable time
+    if (!this.registerTime) {
+      this.registerTime = Date.now();
+    }
     this.registerDateStr = makeReadableTime(this.registerTime);
 
     if (this.karmaPoints < 0) {
