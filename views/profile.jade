@@ -13,6 +13,10 @@
   - if (profileUser.personalWebsite)
     | Website:
     = profileUser.personalWebsite
+  #joinDate
+    - if (typeof(profileUser.registerDateStr) !== 'undefined')
+      | Joined on
+      = profileUser.registerDateStr
   #profTranscriptions
     | Transcriptions:
     #profTranscriptionData

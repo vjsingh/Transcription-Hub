@@ -29,6 +29,9 @@
     #uploadedByUsername
       | Uploaded by:
       a#uploadedByUsernameLink.jqueryHide(userId=t.userId, href='#')
+      - if (typeof(t.uploadDateStr) !== 'undefined')
+        | &nbsp on
+        = t.uploadDateStr
     - if (t.description != '')
       .trDescription
         blockquote

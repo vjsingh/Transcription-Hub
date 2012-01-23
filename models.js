@@ -19,6 +19,8 @@ function defineModels(mongoose, fn) {
     'artist': {type: String, index: true},
     'instrument': {type: String, index: true, 'default': 'Not Specified'},
     'description': {type: String},
+    'uploadTime': {type: Number},
+    'uploadDateStr': {type: String},
     'fileLocation': {type: String},
     'url': {type: String},
     'upVotes': {type: Number, 'default': 0, set: changeNumVotes},
@@ -32,8 +34,18 @@ function defineModels(mongoose, fn) {
       return this._id.toHexString();
   });
 
+  function makeReadableTime(mill) {
+    var d = new Date(mill);
+    var month = d.getMonth() + 1;
+    var day = d.getDate();
+    var year = d.getFullYear();
+    return month + '/' + day + '/' + year;
+  }
   Transcription.pre('save', function(next) {
     this.votes = this.upVotes - this.downVotes;
+
+    // Convert to readable time
+    this.uploadDateStr = makeReadableTime(this.uploadTime);
     // Collapse if only whitespace
     if (!(/\S/.test(this.description))) {
       // string is all whitespace
@@ -68,6 +80,8 @@ function defineModels(mongoose, fn) {
     'karmaPoints': {type: Number, 'default': 0},
     'personalWebsite': {type: String},
     'hashed_password': String,
+    'registerTime': {type: Number},
+    'registerDateStr': {type: String},
     'salt': String
   });
 
@@ -113,7 +127,9 @@ function defineModels(mongoose, fn) {
 
   // Never have < 0 karmaPoints
   User.pre('save', function(next) {
-    console.log('saving user', this.karmaPoints);
+    // Convert to readable time
+    this.registerDateStr = makeReadableTime(this.registerTime);
+
     if (this.karmaPoints < 0) {
       this.karmaPoints = 0;
     }

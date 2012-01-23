@@ -123,6 +123,12 @@ models.defineModels(mongoose, function() {
     db = mongoose.connect(app.set('db-uri'));
 });
 
+
+
+//**********************************
+// Helper functions
+//**********************************
+
 function authenticateFromLoginToken(req, res, next) {
   var cookie = JSON.parse(req.cookies.logintoken);
 
@@ -151,7 +157,14 @@ function authenticateFromLoginToken(req, res, next) {
   }));
 }
 
+function getReadableTime(mill) {
+}
+
+
+//**********************************
 //Middleware
+//**********************************
+
 function member(req, res, next) {
   if (!req.currentUser) {
       res.redirect('/register');
@@ -189,7 +202,11 @@ function validateErr(req, res, next) {
 app.listen(3000);
 console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
 
+
+
+//**********************************
 // Routes
+//**********************************
 
 app.get('/svg', function(req, res) {
   throw new Error('fake error!');
@@ -294,7 +311,11 @@ app.post('/fillBounty', function(req, res) {
 
 // Users
 app.get('/profile', member, function(req, res) {
-  res.render('profile');
+  res.render('profile', {
+    locals: {
+      profileUser: req.currentUser
+    }
+  });
 });
 
 app.get('/user/:userId', member, function(req, res) {
@@ -335,8 +356,8 @@ app.post('/register', function(req, res) {
     });
   }
 
+  user.registerTime = Date.now();
   user.save(function(err) {
-    console.log("SAVING", err);
     if (err) return userSaveFailed();
 
     req.flash('info', 'Your account has been created');
@@ -725,6 +746,8 @@ app.post('/transcriptions.:format?', function(req, res) {
   }
   function addTranscription(transcription) {
     transcription.userId = req.currentUser.id;
+    console.log(Date.now());
+    transcription.uploadTime = Date.now();
     transcription.save(function(err) {
       if (err) {
         throw new Error(err);
