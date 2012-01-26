@@ -228,7 +228,7 @@ app.get('/about', function(req, res) {
 });
 
 // Bounty
-app.get('/bounty', member, function(req, res) {
+app.get('/bounty', function(req, res) {
   Bounty.find()
   .sort('points', -1)
   .execFind(function(err, bounties) {
@@ -243,7 +243,7 @@ app.get('/bounty', member, function(req, res) {
     });
   });
 });
-app.get('/bounty/:id', member, function(req, res) {
+app.get('/bounty/:id', function(req, res) {
   Bounty.findById(req.params.id, function(err, b) {
     if (err) {
       throw new Error(err);
@@ -302,10 +302,10 @@ app.post('/addToBounty', member, function(req, res) {
   });
 });
 
-app.get('/fillBounty', function(req, res) {
+app.get('/fillBounty', member, function(req, res) {
   res.render('unfinished');
 });
-app.post('/fillBounty', function(req, res) {
+app.post('/fillBounty', member, function(req, res) {
   res.render('unfinished');
 });
 
@@ -426,7 +426,7 @@ app.get('/checkPoints/', function(req, res) {
 
 var profileTrsDisplay = fs.readFileSync('./views/userProfileTranscriptions.jade');
 var profileTrsDisplayTemple = jade.compile(profileTrsDisplay.toString('utf8'));
-app.get('/userTranscriptions/:userId', function(req, res) {
+app.get('/userTranscriptions/:userId', member, function(req, res) {
   Transcription.find({userId: req.params.userId}, function(err, trs) {
     if (err) {
       throw new Error(err);
@@ -442,7 +442,7 @@ app.get('/userTranscriptions/:userId', function(req, res) {
 
 var profileBountyDisplay = fs.readFileSync('./views/userProfileBounties.jade');
 var profileBountyDisplayTemple = jade.compile(profileBountyDisplay.toString('utf8'));
-app.get('/userBounties/:userId', function(req, res) {
+app.get('/userBounties/:userId', member, function(req, res) {
   Bounty.find({userId: req.params.userId}, function(err, bounties) {
     if (err) {
       throw new Error(err);
@@ -527,7 +527,7 @@ app.post('/login', function(req, res) {
   });
 });
 
-app.get('/logout', function(req, res) {
+app.get('/logout', member, function(req, res) {
   if (req.session) {
     LoginToken.remove({ username: req.currentUser.username }, function() {});
     res.clearCookie('logintoken');
@@ -538,7 +538,7 @@ app.get('/logout', function(req, res) {
 });
 
 // Transcription list
-app.get('/transcriptions', member, function(req, res) {
+app.get('/transcriptions', function(req, res) {
   res.redirect('/search');
   /*
   Transcription.find({ user_id: req.currentUser.id },
@@ -555,7 +555,7 @@ app.get('/transcriptions', member, function(req, res) {
 });
 
 //app.get('/transcriptionPdf/:fileLoc', member, function(req, res) {
-app.get('/transcriptionPdf/:download/:fileLoc', member, function(req, res) {
+app.get('/transcriptionPdf/:download/:fileLoc', function(req, res) {
   var fileLoc = TRANSCRIPTION_FILE_DIR + req.params.fileLoc;
   var download = req.params.download;
   path.exists(fileLoc, function(exists) {
@@ -577,7 +577,7 @@ app.get('/transcriptionPdf/:download/:fileLoc', member, function(req, res) {
   });
 });
 
-app.get('/getUsername/:userId', member, function(req, res) {
+app.get('/getUsername/:userId', function(req, res) {
   var userId = req.params.userId;
   // TODO: Only get username field
   User.findById(userId, function(err, user) {
@@ -590,15 +590,19 @@ app.get('/getUsername/:userId', member, function(req, res) {
 });
 
 // Votes
-app.get('/hasVoted/:trId', member, function(req, res) {
-  var userId = req.currentUser.id;
-  var trId = req.params.trId;
-  User.hasVoted(userId, trId, function(err, hasVoted) {
-    if (err) {
-      throw new Error(err);
-    }
-    res.end('' + hasVoted);
-  });
+app.get('/hasVoted/:trId', function(req, res) {
+  if (!req.currentUser) {
+    res.end('' + false);
+  } else {
+    var userId = req.currentUser.id;
+    var trId = req.params.trId;
+    User.hasVoted(userId, trId, function(err, hasVoted) {
+      if (err) {
+        throw new Error(err);
+      }
+      res.end('' + hasVoted);
+    });
+  }
 });
 
 function removeVote(typeVote, userId, trId, cb) {
@@ -717,7 +721,7 @@ app.get('/doVote/:typeVote/:trId', member, function(req, res) {
 // CRUD for transcriptions
 
 // Create
-app.post('/transcriptions.:format?', function(req, res) {
+app.post('/transcriptions.:format?', member, function(req, res) {
   // Can post with either a url or a pdf
   var isFilePost = false;
   var file = req.files.transcription.file;
@@ -799,10 +803,14 @@ app.get('/transcriptions/new', member, function(req, res) {
 });
 
 // Read
-var trDisplayFile = fs.readFileSync('./views/transcriptionDisplay.jade');
-var trDisplayTemple = jade.compile(trDisplayFile.toString('utf8'));
+function makeTemplate(fileName) {
+  var displayFile = fs.readFileSync('./views/' + fileName + '.jade');
+  return jade.compile(displayFile.toString('utf8'));
+}
 
-app.get('/getTranscription/:id', member, function(req, res) {
+var trDisplayTemple = makeTemplate('transcriptionDisplay');
+
+app.get('/getTranscription/:id', function(req, res) {
   Transcription.findById(req.params.id, function(err, t) {
     var html = trDisplayTemple({
       t: t
@@ -814,10 +822,9 @@ app.get('/getTranscription/:id', member, function(req, res) {
   });
 });
 
-var bountyDisplayFile = fs.readFileSync('./views/bountyDisplay.jade');
-var bountyDisplayTemple = jade.compile(bountyDisplayFile.toString('utf8'));
+var bountyDisplayTemple = makeTemplate('bountyDisplay');
 
-app.get('/getBounty/:id', member, function(req, res) {
+app.get('/getBounty/:id', function(req, res) {
   Bounty.findById(req.params.id, function(err, b) {
     var html = bountyDisplayTemple({
       b: b
@@ -829,11 +836,63 @@ app.get('/getBounty/:id', member, function(req, res) {
   });
 });
 
-app.post('/transcriptions/:id', member, function(req, res) {
+// Browse
+var browseDisplayTemple = makeTemplate('browseDisplay');
+app.get('/browse/:browseType', function(req, res) {
+  Transcription.distinct(req.params.browseType, {}, function(err, docs) {
+    if (err) {
+      throw new Error(err);
+    }
+    function getCounts(fieldName, fields, agg) {
+      if (fields.length === 0) {
+        console.log(agg);
+        agg.sort(function(a, b) {
+          return a.count < b.count;
+        });
+        console.log('a', agg);
+        //if (req.params.format === 'json') {
+          var html = browseDisplayTemple({
+            browseItems: agg
+          });
+          res.json({
+            //url: '/browse/' + req.params.browseType + '.html',
+            url: '/browse/',
+            html: html
+          });
+        /*
+        } else {
+          res.render('browseDisplay', {
+            browseItems: agg
+          });
+        }
+        */
+      } else {
+        var obj = {};
+        var fieldVal = fields[0];
+        obj[fieldName] = fieldVal;
+        Transcription.count(obj, function(err, count) {
+          if (err) {
+            throw new Error(err);
+          }
+          var returnObj = {};
+          returnObj.value = fieldVal;
+          returnObj.count = count;
+          returnObj.url = '/searchParam/?' + fieldName + '=' + fieldVal;
+          agg.push(returnObj);
+          fields.splice(0, 1);
+          getCounts(fieldName, fields, agg);
+        });
+      }
+    }
+    getCounts(req.params.browseType, docs, []);
+  });
+});
+
+app.post('/transcriptions/:id', function(req, res) {
   res.redirect('/transcriptions/' + req.params.id);
 });
 
-app.get('/transcriptions/:id', member, function(req, res) {
+app.get('/transcriptions/:id', function(req, res) {
   Transcription.findById(req.params.id, function(err, t) {
     if (err) {
       throw new Error(err);
@@ -886,7 +945,7 @@ app.put('/transcriptions/:id.:format?', updateOrDel('save'));
 app.del('/transcriptions/:id.:format?', updateOrDel('delete'));
 
 // Search
-app.get('/search', member, function(req, res) {
+app.get('/search', function(req, res) {
   res.render('transcriptions', {
     locals: {
       searchItems: [],
@@ -895,7 +954,17 @@ app.get('/search', member, function(req, res) {
     }
   });
 });
-app.get('/bounty', member, function(req, res) {
+app.get('/browse', function(req, res) {
+  res.render('browse', {
+    locals: {
+      searchItems: [],
+      search: {},
+      type: 'transcriptions',
+      displayType: 'browse'
+    }
+  });
+});
+app.get('/bounty', function(req, res) {
   res.render('transcriptions', {
     locals: {
       searchItems: [],
@@ -909,8 +978,8 @@ app.get('/bounty', member, function(req, res) {
 // for transcriptions, can be:
 //    One string that should match any fields
 //    Set of strings that should match all fields
-app.post('/search', member, function(req, res) {
-  var search = req.body.search;
+function doSearch(req, res, search) {
+  console.log(search);
 
   // Bastardized to also take bounties
   function gotTrs(err, trs) {
@@ -979,4 +1048,26 @@ app.post('/search', member, function(req, res) {
         .execFind(gotTrs);
     }
   }
+}
+app.post('/search', function(req, res) {
+  var search = req.body.search;
+  console.log('a', search);
+  doSearch(req, res, search);
+});
+app.get('/searchParam', function(req, res) {
+  var searchObj = {
+    title: '',
+    artist: '',
+    album: '',
+    instrument: '',
+    type: 'transcriptions'
+  };
+  var querySearch = req.query;
+  for (var prop in querySearch) {
+  //for (var i in a) {
+    if (querySearch.hasOwnProperty(prop)) {
+      searchObj[prop] = querySearch[prop];
+    }
+  }
+  doSearch(req, res, searchObj);
 });

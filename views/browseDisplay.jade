@@ -1,0 +1,7 @@
+.row.content-box
+  - for (var sIndex in browseItems)
+    - s = browseItems[sIndex]
+    br
+    a(href=s.url)
+      = s.value
+      | &nbsp(#{s.count})

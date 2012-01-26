@@ -80,11 +80,13 @@ html(class='no-js', lang='en')
                 - if (userLoggedIn)
                   li
                     a(href='/Upload') Upload
-                  li
-                    a(href='/bounty') Bounty
                 - else
                   li
                     a(href='/register') Register
+                li
+                  a(href='/bounty') Requests
+                li
+                  a(href='/browse') Browse
               //a.button.btn.primary.pull-left(href="/upload") Upload
               //a.button.btn.primary.pull-left(href="/register") Register
               form.pull-left(method='post', action='/search')

@@ -1,0 +1,57 @@
+// jScrollPane
+- cssScripts.push('/stylesheets/jquery.jscrollpane.css')
+- scripts.push('/javascripts/jquery.jscrollpane.min.js')
+- scripts.push('/javascripts/jquery.mousewheel.js')
+//script(type='text/javascript', src='/javascripts/mwheelIntent.js')
+
+.container-fluid.sidebarContainer
+  .sidebar.box-with-shadow
+    .well
+      h5 Browse Transcriptions
+
+      | Browse by:
+      br
+      a#browseArtistBtn.browse-type-btn(ajaxUrl='/browse/artist') Artist
+      br
+      a#browseAlbumBtn.browse-type-btn(ajaxUrl='/browse/album') Album
+      br
+      a#browseInstrumentBtn.browse-type-btn(ajaxUrl='/browse/instrument') Instrument
+
+  .content.box-with-shadow.content-box
+    #browse-display
+    //
+      #search-display
+        - if (searchItems.length > 0)
+          - if (type === 'transcriptions')
+            !=partial('transcriptionDisplay', {locals: { t: searchItems[0], user:user}})
+          - else
+            !=partial('bountyDisplay', {locals: { b: searchItems[0] }})
+
+
+script(type='text/javascript')
+  $(function() {
+    $('.browse-type-btn').each(function(index, elem) {
+      $(this).click(function() {
+        if (!$(this).hasClass('active')) {
+          var buttonId = '#' + $(this).attr('id');
+          var ajaxUrl = $(this).attr('ajaxUrl');
+          $.get(ajaxUrl, function(obj) {
+            $('.browse-type-btn').removeClass('active');
+            $(buttonId).addClass('active');
+            $('#browse-display').html(obj.html);
+            var stateObj = {
+              selectedButtonId: buttonId
+            }
+            //console.log('pushing', stateObj);
+            history.pushState(stateObj, 'asff', obj.url);
+          });
+        }
+      });
+    });
+    window.onpopstate = function(e) {
+      //console.log(e.state);
+      if (e && e.state && e.state.selectedButtonId) {
+        $(e.state.selectedButtonId).click();
+      }
+    }
+  });
