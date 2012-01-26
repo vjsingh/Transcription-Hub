@@ -845,11 +845,9 @@ app.get('/browse/:browseType', function(req, res) {
     }
     function getCounts(fieldName, fields, agg) {
       if (fields.length === 0) {
-        console.log(agg);
         agg.sort(function(a, b) {
-          return a.count < b.count;
+          return b.count - a.count;
         });
-        console.log('a', agg);
         //if (req.params.format === 'json') {
           var html = browseDisplayTemple({
             browseItems: agg
