@@ -993,10 +993,14 @@ function doSearch(req, res, search) {
     });
   }
 
-  // Match one or more words, split by spaces
-  function makeReg(search) {
+  // If strict, match the exact string as a substring
+  // Othwerise, split on spaces, and match one or more words
+  function makeReg(search, doStrict) {
     if (!search) {
-      return /.?/;
+      return (/.?/);
+    }
+    if (doStrict) {
+      return new RegExp('.?' + search + '.?', 'i');
     }
     var splitArr = search.split(' ');
     var regSearch = '(';
@@ -1019,10 +1023,10 @@ function doSearch(req, res, search) {
     type = Bounty;
   }
   if (search.omniSearch !== '' && !search.omniSearch) {
-    var title = makeReg(search.title);
-    var artist = makeReg(search.artist);
-    var album  = makeReg(search.album);
-    var instrument  = makeReg(search.instrument);
+    var title = makeReg(search.title, true);
+    var artist = makeReg(search.artist, true);
+    var album  = makeReg(search.album, true);
+    var instrument  = makeReg(search.instrument, true);
     type
       .where('title', title)
       .where('artist', artist)
