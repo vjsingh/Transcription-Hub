@@ -137,35 +137,39 @@ script(type='text/javascript')
   }(document, 'script', 'facebook-jssdk'));
 
   $(function() {
-    $('#search0').addClass('active');
+    function initSearchBoxes() {
+      $('#search0').addClass('active');
 
-    $('.search-box').each(function(index, elem) {
-      var trId = $(this).attr('sId');
-      $.get('/hasVoted/' + trId, function(hasVoted) {
-        if (hasVoted === '0') {
+      $('.search-box').each(function(index, elem) {
+        var trId = $(this).attr('sId');
+        $.get('/hasVoted/' + trId, function(hasVoted) {
+          if (hasVoted === '0') {
 
-        } else {
-          setVoteArrowColors(hasVoted, trId);
+          } else {
+            setVoteArrowColors(hasVoted, trId);
+          }
+        });
+      });
+      $('.search-box').click(function() {
+        var ajaxUrl = $(this).attr('ajaxUrl');
+        var buttonId = '#' + $(this).attr('id');
+        // Only update if doing something
+        if (!$(this).hasClass('active')) {
+          $.get(ajaxUrl, function(obj) {
+            $('.search-box').removeClass('active');
+            $(buttonId).addClass('active');
+            $('#search-display').html(obj.html);
+            var stateObj = {
+              selectedButtonId: buttonId
+            }
+            history.pushState(stateObj, 'asff', obj.url);
+            $('.jqueryHide').hide();
+          });
         }
       });
-    });
-    $('.search-box').click(function() {
-      var ajaxUrl = $(this).attr('ajaxUrl');
-      var buttonId = '#' + $(this).attr('id');
-      // Only update if doing something
-      if (!$(this).hasClass('active')) {
-        $.get(ajaxUrl, function(obj) {
-          $('.search-box').removeClass('active');
-          $(buttonId).addClass('active');
-          $('#search-display').html(obj.html);
-          var stateObj = {
-            selectedButtonId: buttonId
-          }
-          history.pushState(stateObj, 'asff', obj.url);
-          $('.jqueryHide').hide();
-        });
-      }
-    });
+    }
+
+    initSearchBoxes();
     window.onpopstate = function(e) {
       if (e && e.state && e.state.selectedButtonId) {
         $(e.state.selectedButtonId).click();
@@ -202,7 +206,6 @@ script(type='text/javascript')
         }
       });
       //listItems.appendTo(list);
-      console.log(listItems);
       api.getContentPane().empty();
       api.getContentPane().append(listItems);
       api.reinitialise();
@@ -210,10 +213,9 @@ script(type='text/javascript')
       $.each(listItems, function(idx, itm) {
         //searchPane.append(itm).jScrollPane();
       });
-      console.log(searchPane);
       //initSearchPane();
       //searchPane.append($('<p>Nothing to see here</p>')).jScrollPane();
-      console.log(searchPane);
+      initSearchBoxes();
     }
     $('#sortSelect').change(function() {
       var type = $(this).val();
