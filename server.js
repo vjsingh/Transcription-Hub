@@ -1076,3 +1076,13 @@ app.get('/searchParam', function(req, res) {
   }
   doSearch(req, res, searchObj);
 });
+/*
+Transcription.find({}, function(err, trs) {
+  trs.forEach(function(tr) {
+    if (!tr.uploadTime) {
+      tr.uploadTime = 1327262166151;
+      tr.save();
+    }
+  });
+});
+*/
