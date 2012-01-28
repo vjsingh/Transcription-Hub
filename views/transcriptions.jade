@@ -32,11 +32,22 @@
           input#searchType.jqueryHide(type='text', name='search[type]', value='bounty')
         input.btn.primary#searchSidebarSubmit(type='submit', value='Search')
 
+      .clearfix
+        .inline Sort by:
+        div.input.inline
+          select.select-auto-width#sortSelect
+            option Votes
+            option Title
+            option Artist
+            option Album
+            option Instrument
+            option Date Uploaded
+
       // Pass numSearchItems to javascripts script
       // in a hacky way
       - numSearchItems = searchItems.length
       input(type='hidden', id='numSearchItems', value=numSearchItems)
-      .search-pane
+      .search-pane#search-results
         - for (var sIndex in searchItems)
           - divName = 'search' + sIndex
           - s = searchItems[sIndex]
@@ -58,12 +69,20 @@
                     = s.points
               .span
                 .search-result-fields
-                  .search-title
+                  .title
                     = s.title
-                  .search-artist
+                  .artist
                     = s.artist
-                  .search-album
+                  .album
                     = s.album
+                  .instrument
+                    = s.instrument
+                  .readable-date-uploaded
+                    = s.uploadDateStr
+                  .dateuploaded.jqueryHide
+                    = s.uploadTime
+                  .votes.jqueryHide
+                    = s.votes
           br
   .content.box-with-shadow.content-box
     #search-display
@@ -154,5 +173,58 @@ script(type='text/javascript')
     }
 
     // use jScrollPane for search scroll pane
-    $('.search-pane').jScrollPane({showArrows: true, autoReinitialise: true});
+    var searchPane = $('#search-results');
+    var api;
+    function initSearchPane() {
+      api = searchPane.jScrollPane({
+        showArrows: true,
+        autoReinitialise: true
+      }).data('jsp');
+    };
+    initSearchPane();
+
+    // For sort select
+    var list = $('#search-results').find('.jspPane');
+    function sortSearchResults(type, descending, isNum) {
+      //var listItems = list.find('.search-box').get();
+      var listItems = list.children().filter('.search-box').get();
+      listItems.sort(function(a, b) {
+        var compA = $.trim($(a).find('.' + type).html()).toLowerCase();
+        var compB = $.trim($(b).find('.' + type).html()).toLowerCase();
+        if (isNum) {
+          compA = parseInt(compA);
+          compB = parseInt(compB);
+        }
+        if (descending) {
+          return (compA < compB) ? 1 : (compA > compB) ? -1 : 0;
+        } else {
+          return (compA < compB) ? -1 : (compA > compB) ? 1 : 0;
+        }
+      });
+      //listItems.appendTo(list);
+      console.log(listItems);
+      api.getContentPane().empty();
+      api.getContentPane().append(listItems);
+      api.reinitialise();
+      //searchPane.empty().jScrollPane();
+      $.each(listItems, function(idx, itm) {
+        //searchPane.append(itm).jScrollPane();
+      });
+      console.log(searchPane);
+      //initSearchPane();
+      //searchPane.append($('<p>Nothing to see here</p>')).jScrollPane();
+      console.log(searchPane);
+    }
+    $('#sortSelect').change(function() {
+      var type = $(this).val();
+      type = type.toLowerCase();
+      type = type.replace(/ /g, '');
+      var descending = false;
+      var isNum = false;
+      if (type === 'votes') {
+        descending = true;
+        isNum = true;
+      }
+      sortSearchResults(type, descending, isNum);
+    });
   });
