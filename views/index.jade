@@ -7,7 +7,10 @@
         .myH1 Welcome
         p Transcription Hub was created to bring together jazz enthusiasts around the world, providing a platform to share and discuss transcriptions of jazz solos. Countless transcriptions are currently scattered throughout the internet on blogs, forums, and personal websites; Transcription Hub hopes to provide a central website where we can create a searchable index of every jazz solo.
         p
-          a.btn.primary.large(href='/register') Register Now &raquo;
+          - if (typeof(user) !== 'undefined' && user && user.username)
+            a.btn.primary.large(href='/browse') Browse Transcriptions Now &raquo;
+          - else
+            a.btn.primary.large(href='/register') Register Now &raquo;
   .row
     .span-one-third
       h2 Simple Rating System
