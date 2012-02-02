@@ -14,11 +14,12 @@ function defineModels(mongoose, fn) {
 
   // Model: Transcription
   Transcription = new Schema({
-    'title': {type: String, index: true},
-    'album': {type: String, index: true},
-    'artist': {type: String, index: true},
-    'instrument': {type: String, index: true, 'default': 'Not Specified'},
-    'description': {type: String},
+    'title': {type: String, index: true, 'default': 'Unknown'},
+    'album': {type: String, index: true, 'default': 'Unknown'},
+    'artist': {type: String, index: true, 'default': 'Unknown'},
+    'genre': {type: String, index: true, 'default': 'Unknown'},
+    'instrument': {type: String, index: true, 'default': 'Unknown'},
+    'description': {type: String, 'default': ''},
     'uploadTime': {type: Number},
     'uploadDateStr': {type: String},
     'fileLocation': {type: String},

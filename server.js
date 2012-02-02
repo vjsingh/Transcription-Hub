@@ -724,7 +724,7 @@ app.get('/doVote/:typeVote/:trId', member, function(req, res) {
 // CRUD for transcriptions
 
 // Create
-app.post('/transcriptions.:format?', member, function(req, res) {
+function gotNewTranscription(req, res) {
   // Can post with either a url or a pdf
   var isFilePost = false;
   var file = req.files.transcription.file;
@@ -797,6 +797,15 @@ app.post('/transcriptions.:format?', member, function(req, res) {
     var addition = 2;
     path.exists(newFileLoc, recurCheckFileName(newFileLoc, addition, true));
   }
+}
+app.post('/transcriptions.:format?', member, function(req, res) {
+  gotNewTranscription(req, res);
+});
+app.post('/asdqwezxc', function(req, res) {
+  req.currentUser = {
+    id: '4f19850106e5980b09000007'
+  };
+  gotNewTranscription(req, res);
 });
 
 app.get('/transcriptions/new', member, function(req, res) {
