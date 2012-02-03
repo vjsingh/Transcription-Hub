@@ -30,6 +30,14 @@
 
 script(type='text/javascript')
   $(function() {
+    var api;
+    function initBrowsePane() {
+      var browsePane = $('.browse-pane');
+      api = browsePane.jScrollPane({
+        showArrows: true,
+        autoReinitialise: true
+      }).data('jsp');
+    };
     $('.browse-type-btn').each(function(index, elem) {
       $(this).click(function() {
         if (!$(this).hasClass('active')) {
@@ -39,6 +47,7 @@ script(type='text/javascript')
             $('.browse-type-btn').removeClass('active');
             $(buttonId).addClass('active');
             $('#browse-display').html(obj.html);
+            initBrowsePane();
             var stateObj = {
               selectedButtonId: buttonId
             }
