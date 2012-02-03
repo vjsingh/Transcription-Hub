@@ -499,7 +499,7 @@ app.post('/login', function(req, res) {
     res.end();
   }
   function loginSucceed() {
-    res.redirect('/transcriptions');
+    res.redirect('/browse');
     res.end();
   }
   if (!req.body.user || !req.body.user.username || !req.body.user.password) {
