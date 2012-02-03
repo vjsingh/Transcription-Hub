@@ -4,93 +4,95 @@
 - scripts.push('/javascripts/jquery.mousewheel.js')
 //script(type='text/javascript', src='/javascripts/mwheelIntent.js')
 .container-fluid.sidebarContainer
-  .sidebar.box-with-shadow
-    .well
-      //-
-        !=partial('searchPartial', {
-          locals: {
-            type: type,
-            searchItems: searchItems,
-            search: search
-          }
-        })
-        | adsf
-      - if (type === 'transcriptions')
-        h5 Search Transcriptions
-      - else
-        a.btn.primary(href='/createBounty/') + &nbsp   Create Bounty
-        h5 Search Bounties
-      form#searchSidebar(method='post', action='/search')
-        input(type='text', name='search[title]', placeholder='Title', value=search.title || "")
-        input(type='text', name='search[artist]', placeholder='Artist', value=search.artist || "")
-        input(type='text', name='search[album]', placeholder='Album', value=search.album || "")
-        input(type='text', name='search[instrument]', placeholder='Instrument', value=search.instrument || "")
-        //input.hidden(type='text', name='search[type]', value={type})
+  .row-fluid
+    .span3
+      .well.sidebar-nav.box-with-shadow
+        //-
+          !=partial('searchPartial', {
+            locals: {
+              type: type,
+              searchItems: searchItems,
+              search: search
+            }
+          })
+          | adsf
         - if (type === 'transcriptions')
-          input#searchType.jqueryHide(type='text', name='search[type]', value='transcriptions')
+          h5 Search Transcriptions
         - else
-          input#searchType.jqueryHide(type='text', name='search[type]', value='bounty')
-        input.btn.primary#searchSidebarSubmit(type='submit', value='Search')
-
-      .clearfix
-        .inline Sort by:
-        div.input.inline
-          select.select-auto-width#sortSelect
-            option Votes
-            option Title
-            option Artist
-            option Album
-            option Instrument
-            option Date Uploaded
-
-      // Pass numSearchItems to javascripts script
-      // in a hacky way
-      - numSearchItems = searchItems.length
-      input(type='hidden', id='numSearchItems', value=numSearchItems)
-      .search-pane#search-results
-        - for (var sIndex in searchItems)
-          - divName = 'search' + sIndex
-          - s = searchItems[sIndex]
+          a.btn.primary(href='/createBounty/') + &nbsp   Create Bounty
+          h5 Search Bounties
+        form#searchSidebar(method='post', action='/search')
+          input(type='text', name='search[title]', placeholder='Title', value=search.title || "")
+          input(type='text', name='search[artist]', placeholder='Artist', value=search.artist || "")
+          input(type='text', name='search[album]', placeholder='Album', value=search.album || "")
+          input(type='text', name='search[instrument]', placeholder='Instrument', value=search.instrument || "")
+          //input.hidden(type='text', name='search[type]', value={type})
           - if (type === 'transcriptions')
-            - ajaxUrl = '/getTranscription/' + s.id
+            input#searchType.jqueryHide(type='text', name='search[type]', value='transcriptions')
           - else
-            - ajaxUrl = '/getBounty/' + s.id
-          div(id=divName, ajaxUrl=ajaxUrl, sId=s.id).row.search-box.btn
-            .row
-              .span
-                - if (type === 'transcriptions')
-                  .votesArrows(class=searchItems[sIndex].id)
-                    img.upVoteImg(src='/images/arrow2Up.png')
-                    .numKarmaSearch.numVotes
+            input#searchType.jqueryHide(type='text', name='search[type]', value='bounty')
+          input.btn.primary#searchSidebarSubmit(type='submit', value='Search')
+
+        .clearfix
+          .inline Sort by:
+          div.input.inline
+            select.select-auto-width#sortSelect
+              option Votes
+              option Title
+              option Artist
+              option Album
+              option Instrument
+              option Date Uploaded
+
+        // Pass numSearchItems to javascripts script
+        // in a hacky way
+        - numSearchItems = searchItems.length
+        input(type='hidden', id='numSearchItems', value=numSearchItems)
+        .search-pane#search-results
+          - for (var sIndex in searchItems)
+            - divName = 'search' + sIndex
+            - s = searchItems[sIndex]
+            - if (type === 'transcriptions')
+              - ajaxUrl = '/getTranscription/' + s.id
+            - else
+              - ajaxUrl = '/getBounty/' + s.id
+            div(id=divName, ajaxUrl=ajaxUrl, sId=s.id).row.search-box.btn
+              .row
+                .span
+                  - if (type === 'transcriptions')
+                    .votesArrows(class=searchItems[sIndex].id)
+                      img.upVoteImg(src='/images/arrow2Up.png')
+                      .numKarmaSearch.numVotes
+                        = s.votes
+                      img.downVoteImg(src='/images/arrow2.png')
+                  - else
+                    .numPointsBountySearch
+                      = s.points
+                .span
+                  .search-result-fields
+                    .title
+                      = s.title
+                    .artist
+                      = s.artist
+                    .album
+                      = s.album
+                    .instrument
+                      = s.instrument
+                    .readable-date-uploaded
+                      = s.uploadDateStr
+                    .dateuploaded.jqueryHide
+                      = s.uploadTime
+                    .votes.jqueryHide
                       = s.votes
-                    img.downVoteImg(src='/images/arrow2.png')
-                - else
-                  .numPointsBountySearch
-                    = s.points
-              .span
-                .search-result-fields
-                  .title
-                    = s.title
-                  .artist
-                    = s.artist
-                  .album
-                    = s.album
-                  .instrument
-                    = s.instrument
-                  .readable-date-uploaded
-                    = s.uploadDateStr
-                  .dateuploaded.jqueryHide
-                    = s.uploadTime
-                  .votes.jqueryHide
-                    = s.votes
-          br
-  .content.box-with-shadow.content-box
-    #search-display
-      - if (searchItems.length > 0)
-        - if (type === 'transcriptions')
-          !=partial('transcriptionDisplay', {locals: { t: searchItems[0], user:user}})
-        - else
-          !=partial('bountyDisplay', {locals: { b: searchItems[0] }})
+            br
+    .span9
+      .content.box-with-shadow.content-box
+        #search-display
+          - if (searchItems.length > 0)
+            - if (type === 'transcriptions')
+              !=partial('transcriptionDisplay', {locals: { t: searchItems[0], user:user}})
+            - else
+              !=partial('bountyDisplay', {locals: { b: searchItems[0] }})
 
   //var numTranscriptions = $('#numTranscriptions').val();
   //

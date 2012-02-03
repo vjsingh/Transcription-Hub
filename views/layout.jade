@@ -44,8 +44,12 @@ html(class='no-js', lang='en')
     //script(type='text/javascript', src='https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.7/jquery-ui.min.js')
     //script(type='text/javascript', src='/javascripts/underscore-min.js')
     //script(type='text/javascript', src='/javascripts/backbone-min.js')
-    link(rel='stylesheet/less', href='/stylesheets/bootstrap.less')
+    //link(rel='stylesheet/less', href='/stylesheets/bootstrap.less')
     //link(rel='stylesheet', href='/stylesheets/bootstrap.css')
+    link(rel='stylesheet/less', href='/stylesheets/bs/less/bootstrap.less')
+    link(rel='stylesheet/less', href='/stylesheets/myStyles.less')
+    //link(rel='stylesheet', href='/stylesheets/bs/docs/assets/css/bootstrap.css')
+
     script(src='/stylesheets/less-1.1.5.min.js')
     script(type="text/javascript", src="/javascripts/bootstrap-twipsy.js")
     script(type="text/javascript", src="/javascripts/bootstrap-popover.js")
@@ -67,8 +71,8 @@ html(class='no-js', lang='en')
     <div id="fb-root"></div>
     #entire-page
       #entire-page-minus-footer
-        .topbar
-          .topbar-inner
+        .navbar
+          .navbar-inner
             .container-fluid
               a.brand(href='/')
                 img#logoTopbar(src='/images/saxIcon.png', width=30, height=30)
@@ -89,20 +93,20 @@ html(class='no-js', lang='en')
                   a(href='/browse') Browse
               //a.button.btn.primary.pull-left(href="/upload") Upload
               //a.button.btn.primary.pull-left(href="/register") Register
-              form.pull-left(method='post', action='/search')
+              form.navbar-search.pull-left(method='post', action='/search')
                 input#searchType.jqueryHide(type='text', name='search[type]', value='transcriptions')
-                input(type='text', name='search[omniSearch]', placeholder='Enter Artist/Song/Album')
+                input.search-query(type='text', name='search[omniSearch]', placeholder='Enter Artist/Song/Album')
                 input(type='submit', style='position: absolute; left: -9999px;') // hide submit button
-              .pull-right
+              .pull-right.navbar-text
                 - if (userLoggedIn)
-                  li.right
+                  .right
                     | Logged in as:
                     a#profile(href='/profile')
                       = user.username
                     a#logout(href='/logout') Log Out
                 - else
                   script(type='text/javascript', src='/javascripts/login.js')
-                  form#loginTopBar(method='post', action'=/login')
+                  form.navbar-form#loginTopBar(method='post', action'=/login')
                     != partial('loginFields', {locals: {user: user}})
         != body
       #footer

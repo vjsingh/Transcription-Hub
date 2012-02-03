@@ -1,10 +1,11 @@
 link(rel='stylesheet/less', href='/stylesheets/bootstrap.less')
 script(src='/stylesheets/less-1.1.5.min.js')
-.row.content-box
-  .browse-pane#browse(style='height: 600px !important;width: 200px !important')
-    - for (var sIndex in browseItems)
-      - s = browseItems[sIndex]
-      br
-      a(href=s.url)
-        = s.value
-        | &nbsp(#{s.count})
+.row-fluid
+  .content-box
+    .browse-pane#browse(style='height: 600px !important;width: 200px !important')
+      - for (var sIndex in browseItems)
+        - s = browseItems[sIndex]
+        br
+        a(href=s.url)
+          = s.value
+          | &nbsp(#{s.count})

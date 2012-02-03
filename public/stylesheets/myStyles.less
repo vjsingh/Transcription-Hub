@@ -35,14 +35,23 @@ body {
 }
 
 .content {
-  min-width: 80%;
+  //min-width: 80%;
 }
 
 #entire-page-minus-footer {
   height: 100%;
   padding-bottom: 10em;
 }
+.welcomeText {
+  width: 76%;
+}
 
+/*
++  margin: 0;
++  position:absolute;
++  bottom:0;
++  height:40px;
+*/
 #footer {
   color: #767676;
   background-color: #252525;
@@ -60,11 +69,11 @@ body {
   }
 }
 
-.topbar .container-fluid {
+.navbar .container-fluid {
   min-width: 0px;
 }
 
-.topbar {
+.navbar {
   #username {
     margin-left: 5px;
   }
@@ -85,8 +94,8 @@ body {
 
 .container-fluid {
   > .sidebar {
-    width: @sidebarWidth;
-    left: @sidebarMargin;
+    //width: @sidebarWidth;
+    //left: @sidebarMargin;
     min-height: 100%;
     background: whitesmoke;
     > .well {
@@ -130,8 +139,8 @@ body {
 }
 
 .search-result-fields {
-  font-size: @basefont;
-  width: 106px;
+  //font-size: @basefont;
+  //width: 106px;
   word-wrap: break-word;
 }
 
@@ -155,8 +164,14 @@ body {
   margin-bottom: 18px;
 }
 
+.navbar-inner {
+  a {
+    color: #BFBFBF;
+  }
+}
+
 .brand {
-  height: 40px;
+  //height: 40px;
   padding: 0px !important;
   padding-bottom: 0px !important;
   line-height: 0px !important;
@@ -193,7 +208,8 @@ body {
 #searchSidebar {
   input {
     margin-bottom: 5px;
-    width: @sidebarWidth - 35px;
+    //width: @sidebarWidth - 35px;
+    width: 100%;
   }
 }
 
@@ -203,7 +219,7 @@ body {
   margin-left: 5px;
   margin-top: 0px;
   margin-bottom: 3px;
-  width: 170px;
+  width: 86%;
 }
 
 .search-box.active {
@@ -240,7 +256,7 @@ body {
 
 .bounty-display {
   > .display-points {
-    color: @blueDark;
+    //color: @blueDark;
     font-size: 50px;
     padding-right: 20px;
     display: inline;
@@ -250,11 +266,12 @@ body {
 }
 
 .content-box {
-  padding-left: 10px;
+  width: auto;
+  margin-left: 10px;
+  //padding-left: 10px;
   padding-top: 5px;
   padding-bottom: 1px;
   background: whitesmoke;
-  height: 647px;
 }
 
 .box-with-shadow {
@@ -302,6 +319,9 @@ body {
 
 .hero-unit {
   color: white !important;
+   margin-top: 20px;
+   //background-color: #f5f5f5;
+   background-color: #6E6E6E;
   .myH1 {
     font-size: 60px;
     line-height: 1;
@@ -318,6 +338,7 @@ body {
 .saxIconLarge {
   position: relative;
   top: 10px;
+  left: 20px;
 }
 
 .hero-unit {
