@@ -268,15 +268,15 @@ app.get('/createBounty', member, function(req, res) {
 function addToBounty(bounty, points, req, res) {
   bounty.points = parseInt(bounty.points, 10) + parseInt(points, 10);
   bounty.save();
-  User.findById(req.currentUser.id, function(err, user) {
-    if (user.karmaPoints < points) {
-      console.log('ZQX Cheater: ' + user.id + user.username);
-      throw new Error('Stop trying to cheat! Your account has been flagged');
-    }
-    user.karmaPoints = user.karmaPoints - points;
-    user.save();
-    res.redirect('/bounty');
-  });
+  //User.findById(req.currentUser.id, function(err, user) {
+  if (user.karmaPoints < points) {
+    console.log('ZQX Cheater: ' + user.id + user.username);
+    throw new Error('Stop trying to cheat! Your account has been flagged');
+  }
+  user.karmaPoints = user.karmaPoints - points;
+  user.save();
+  res.redirect('/bounty');
+  //});
 }
 app.post('/createBounty', member, function(req, res) {
   var bounty = new Bounty(req.body.bounty);
@@ -411,19 +411,19 @@ app.get('/checkPoints/', function(req, res) {
     res.end();
   } else {
     var points = parseInt(req.query.bounty.points, 10);
-    User.findById(req.currentUser.id, function(err, user) {
-      if (err) {
-        console.log("ERROR: " + err);
-      } else {
-        if (user.karmaPoints >= points) {
-          res.write('true');
-          res.end();
-        } else {
-          res.write('false');
-          res.end();
-        }
-      }
-    });
+    //User.findById(req.currentUser.id, function(err, user) {
+      //if (err) {
+    //console.log("ERROR: " + err);
+  //} else {
+    if (user.karmaPoints >= points) {
+      res.write('true');
+      res.end();
+    } else {
+      res.write('false');
+      res.end();
+    }
+      //}
+    //});
   }
 });
 
@@ -1085,6 +1085,26 @@ app.get('/searchParam', function(req, res) {
   }
   doSearch(req, res, searchObj);
 });
+function makeEmailList() {
+  var stream = fs.createWriteStream('subscribers.txt');
+  stream.once('open', function(fd) {
+    console.log('w');
+  });
+  stream.once('open', function(fd) {
+    User.find({}, function(err, users) {
+      if (err) {
+        throw new Error(err);
+      }
+    //console.log(users);
+      console.log('writing');
+      stream.write('Email Address,Username\n');
+      users.forEach(function(user) {
+        stream.write(user.email + ',' + user.username + '\n');
+      });
+    });
+  });
+}
+makeEmailList();
 /*
 Transcription.find({}, function(err, trs) {
   trs.forEach(function(tr) {
