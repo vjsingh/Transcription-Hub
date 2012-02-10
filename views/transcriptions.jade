@@ -142,15 +142,11 @@ script(type='text/javascript')
   $(function() {
     $('.search-box').each(function(index, elem) {
       var trId = $(this).attr('sId');
-      console.log($(this).attr('hasVoted'));
       setVoteArrowColors($(this).attr('hasVoted'), trId);
     });
     function initSearchBoxes() {
       $('#search0').addClass('active');
 
-      $('.search-box').waypoint(function() {
-        console.log(this);
-      });
       $('.search-box').click(function() {
         var ajaxUrl = $(this).attr('ajaxUrl');
         var buttonId = '#' + $(this).attr('id');
