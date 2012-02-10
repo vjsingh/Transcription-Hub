@@ -1,48 +1,50 @@
 // Validate
 script(type='text/javascript', src='/javascripts/forms.js')
 
+.row-fluid
+  .center-content
+    .content-box
+      form#uploadForm(method='post', enctype="multipart/form-data", action='/transcriptions.json')
+        fieldset
+          legend Upload a transcription
+          .clearfix
+            label(for='title') Title
+            .input
+              input#uploadTitle.required(name='transcription[title]', value='', type='text', minlength='3')
+          .clearfix
+            label Artist
+            .input
+              input.required(name='transcription[artist]', value='', type='text',  minlength='3')
+          .clearfix
+            label Album
+            .input
+              input.required(name='transcription[album]', value='', type='text')
+          .clearfix
+            label Instrument
+            .input
+              input.required(name='transcription[instrument]', value='', type='text')
+          .clearfix
+            label Description
+            .input
+             textarea(name='transcription[description]', default='')
+          br
+          h5
+            | Please upload either a
+          .clearfix
+            label File (PDF)
+            .input
+              input.fillone(type='file', name='transcription[file]', accept='pdf', fillone=true)
+          h5
+            | Or a
+          .clearfix
+            label Link to page with transcription
+            .input
+              input.fillone.url(type='text', name='transcription[url]', value='', fillone=true)
+          #uploadDisclaimer
+            | By Uploading, you agree to our
+            a(href='/about') terms and conditions
 
-form#uploadForm(method='post', enctype="multipart/form-data", action='/transcriptions.json')
-  fieldset
-    legend Upload a transcription
-    .clearfix
-      label(for='title') Title
-      .input
-        input#uploadTitle.required(name='transcription[title]', value='', type='text', minlength='3')
-    .clearfix
-      label Artist
-      .input
-        input.required(name='transcription[artist]', value='', type='text',  minlength='3')
-    .clearfix
-      label Album
-      .input
-        input.required(name='transcription[album]', value='', type='text')
-    .clearfix
-      label Instrument
-      .input
-        input.required(name='transcription[instrument]', value='', type='text')
-    .clearfix
-      label Description
-      .input
-       textarea(name='transcription[description]', default='')
-    br
-    h5
-      | Please upload either a
-    .clearfix
-      label File (PDF)
-      .input
-        input.fillone(type='file', name='transcription[file]', accept='pdf', fillone=true)
-    h5
-      | Or a
-    .clearfix
-      label Link to page with transcription
-      .input
-        input.fillone.url(type='text', name='transcription[url]', value='', fillone=true)
-    #uploadDisclaimer
-      | By Uploading, you agree to our
-      a(href='/about') terms and conditions
-
-    .actions
-      input.btn.primary(type='submit', value='Upload')
-      button.btn(type='reset') Cancel
+          .actions
+            input.btn.primary(type='submit', value='Upload')
+            button.btn(type='reset') Cancel
 

@@ -18,7 +18,7 @@
         br
         a#browseInstrumentBtn.browse-type-btn(ajaxUrl='/browse/instrument') Instrument
 
-    .span9.content.box-with-shadow.content-box
+    .span8.content.box-with-shadow.content-box.jqueryHide
       #browse-display
       //
         #search-display
@@ -48,7 +48,8 @@ script(type='text/javascript')
             $('.browse-type-btn').removeClass('active');
             $(buttonId).addClass('active');
             $('#browse-display').html(obj.html);
-            initBrowsePane();
+            $('.content-box').show();
+            //initBrowsePane();
             var stateObj = {
               selectedButtonId: buttonId
             }

@@ -114,10 +114,14 @@ body {
 
 // For Form Validation
 
-#uploadForm {
+.center-content {
   // TODO display in middle
-  //margin-left: auto;
-  //margin-right: auto;
+  margin-left: auto;
+  margin-right: auto;
+}
+#uploadForm {
+  margin: 0px auto;
+  width: auto;
   padding-left: 50px;
   label.error{
     float: none;
@@ -253,22 +257,30 @@ body {
 .trComments {
   min-height: 100%;
 }
+.trPdfParent {
+  height: 100%;
+  overflow: hidden;
+  position: relative;
+}
 
 .bounty-display {
+  position: relative;
+  top: 10px;
   > .display-points {
-    //color: @blueDark;
+    // TODO Change to be @blueDark
+    color: #0064cd;
     font-size: 50px;
     padding-right: 20px;
     display: inline;
     padding-bottom: 20px;
-    margin-top: 10px;
+    margin-top: 40px;
   }
 }
 
 .content-box {
   width: auto;
   margin-left: 10px;
-  //padding-left: 10px;
+  padding-left: 10px;
   padding-top: 5px;
   padding-bottom: 1px;
   background: whitesmoke;
