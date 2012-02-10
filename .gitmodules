@@ -4,3 +4,6 @@
 [submodule "public/waypoints"]
 	path = public/waypoints
 	url = https://github.com/imakewebthings/jquery-waypoints.git
+[submodule "public/stylesheets/bs"]
+	path = public/stylesheets/bs
+	url = https://github.com/twitter/bootstrap.git
