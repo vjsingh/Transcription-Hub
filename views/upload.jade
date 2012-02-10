@@ -2,43 +2,45 @@
 script(type='text/javascript', src='/javascripts/forms.js')
 
 .row-fluid
-  .center-content
-    .content-box
-      form#uploadForm(method='post', enctype="multipart/form-data", action='/transcriptions.json')
+  //.span6.offset2 TODO when bs fixes
+  //.span6.center-content
+  .center-content.width50
+    .content-box.box-with-shadow
+      form#uploadForm.form-horizontal.center-content(method='post', enctype="multipart/form-data", action='/transcriptions.json')
         fieldset
           legend Upload a transcription
-          .clearfix
-            label(for='title') Title
-            .input
-              input#uploadTitle.required(name='transcription[title]', value='', type='text', minlength='3')
-          .clearfix
-            label Artist
-            .input
+          .control-group
+            label.control-label(for='title') Title
+            .controls
+              input#uploadTitle.required.input(name='transcription[title]', value='', type='text', minlength='3')
+          .control-group
+            label.control-label Artist
+            .controls
               input.required(name='transcription[artist]', value='', type='text',  minlength='3')
-          .clearfix
-            label Album
-            .input
+          .control-group
+            label.control-label Album
+            .controls
               input.required(name='transcription[album]', value='', type='text')
-          .clearfix
-            label Instrument
-            .input
+          .control-group
+            label.control-label Instrument
+            .controls
               input.required(name='transcription[instrument]', value='', type='text')
-          .clearfix
-            label Description
-            .input
+          .control-group
+            label.control-label Description
+            .controls
              textarea(name='transcription[description]', default='')
           br
           h5
             | Please upload either a
-          .clearfix
-            label File (PDF)
-            .input
+          .control-group
+            label.control-label File (PDF)
+            .controls
               input.fillone(type='file', name='transcription[file]', accept='pdf', fillone=true)
           h5
             | Or a
-          .clearfix
-            label Link to page with transcription
-            .input
+          .control-group
+            label.control-label Link to page with transcription
+            .controls
               input.fillone.url(type='text', name='transcription[url]', value='', fillone=true)
           #uploadDisclaimer
             | By Uploading, you agree to our
