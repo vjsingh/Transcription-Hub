@@ -36,6 +36,7 @@ $(function () {
             msg.addClass(cls);
             msg.text(caption);
             input.next('.help-inline').remove();
+            input.next('.help-block').remove();
             input.after(msg);
         }
     }
