@@ -1,3 +1,6 @@
 [submodule "lib/waypoints"]
 	path = lib/waypoints
 	url = https://github.com/imakewebthings/jquery-waypoints.git
+[submodule "public/waypoints"]
+	path = public/waypoints
+	url = https://github.com/imakewebthings/jquery-waypoints.git

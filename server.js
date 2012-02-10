@@ -593,19 +593,24 @@ app.get('/getUsername/:userId', function(req, res) {
 });
 
 // Votes
-app.get('/hasVoted/:trId', function(req, res) {
+function getHasVoted(req, trId, cb) {
   if (!req.currentUser) {
-    res.end('' + false);
+    cb(false);
   } else {
     var userId = req.currentUser.id;
-    var trId = req.params.trId;
     User.hasVoted(userId, trId, function(err, hasVoted) {
       if (err) {
         throw new Error(err);
       }
-      res.end('' + hasVoted);
+      cb(hasVoted);
     });
   }
+
+}
+app.get('/hasVoted/:trId', function(req, res) {
+  getHasVoted(req, req.params.trId, function(hasVoted) {
+    res.end('' + hasVoted);
+  });
 });
 
 function removeVote(typeVote, userId, trId, cb) {
@@ -996,13 +1001,30 @@ function doSearch(req, res, search) {
     if (err) {
       throw new Error(err);
     }
-    res.render('transcriptions', {
-      locals: {
-        searchItems: trs,
-        search: search || {},
-        type: (search && search.type) || 'transcriptions'
+
+    // Get has voted for all trs
+    function finished(newTrs) {
+      res.render('transcriptions', {
+        locals: {
+          searchItems: newTrs,
+          search: search || {},
+          type: (search && search.type) || 'transcriptions'
+        }
+      });
+    }
+    function addHasVoted(index, acc) {
+      if (index === (trs.length)) {
+        finished(acc);
+      } else {
+        var newTr = trs[index];
+        getHasVoted(req, newTr.id, function(hasVoted) {
+          newTr.hasVoted = hasVoted;
+          acc.push(newTr);
+          addHasVoted(index + 1, acc);
+        });
       }
-    });
+    }
+    addHasVoted(0, []);
   }
 
   // If strict, match the exact string as a substring

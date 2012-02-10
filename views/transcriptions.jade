@@ -2,6 +2,7 @@
 - cssScripts.push('/stylesheets/jquery.jscrollpane.css')
 - scripts.push('/javascripts/jquery.jscrollpane.min.js')
 - scripts.push('/javascripts/jquery.mousewheel.js')
+- scripts.push('/waypoints/waypoints.min.js')
 //script(type='text/javascript', src='/javascripts/mwheelIntent.js')
 .container-fluid.sidebarContainer
   .row-fluid
@@ -56,7 +57,7 @@
               - ajaxUrl = '/getTranscription/' + s.id
             - else
               - ajaxUrl = '/getBounty/' + s.id
-            div(id=divName, ajaxUrl=ajaxUrl, sId=s.id).row.search-box.btn
+            div(id=divName, ajaxUrl=ajaxUrl, sId=s.id, hasVoted = s.hasVoted).row.search-box.btn
               .row
                 .span
                   - if (type === 'transcriptions')
@@ -139,18 +140,22 @@ script(type='text/javascript')
   }(document, 'script', 'facebook-jssdk'));
 
   $(function() {
+    $('.search-box').each(function(index, elem) {
+      var trId = $(this).attr('sId');
+      //$.get('/hasVoted/' + trId, function(hasVoted) {
+        //if (hasVoted === '0') {
+
+        //} else {
+      console.log($(this).attr('hasVoted'));
+      setVoteArrowColors($(this).attr('hasVoted'), trId);
+        //}
+      //});
+    });
     function initSearchBoxes() {
       $('#search0').addClass('active');
 
-      $('.search-box').each(function(index, elem) {
-        var trId = $(this).attr('sId');
-        $.get('/hasVoted/' + trId, function(hasVoted) {
-          if (hasVoted === '0') {
-
-          } else {
-            setVoteArrowColors(hasVoted, trId);
-          }
-        });
+      $('.search-box').waypoint(function() {
+        console.log(this);
       });
       $('.search-box').click(function() {
         var ajaxUrl = $(this).attr('ajaxUrl');
