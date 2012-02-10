@@ -142,14 +142,8 @@ script(type='text/javascript')
   $(function() {
     $('.search-box').each(function(index, elem) {
       var trId = $(this).attr('sId');
-      //$.get('/hasVoted/' + trId, function(hasVoted) {
-        //if (hasVoted === '0') {
-
-        //} else {
       console.log($(this).attr('hasVoted'));
       setVoteArrowColors($(this).attr('hasVoted'), trId);
-        //}
-      //});
     });
     function initSearchBoxes() {
       $('#search0').addClass('active');
