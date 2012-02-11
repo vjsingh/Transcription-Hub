@@ -1102,7 +1102,6 @@ function doSearch(req, res, search) {
 }
 app.post('/search', function(req, res) {
   var search = req.body.search;
-  console.log('a', search);
   doSearch(req, res, search);
 });
 app.get('/searchParam', function(req, res) {
@@ -1125,14 +1124,10 @@ app.get('/searchParam', function(req, res) {
 function makeEmailList() {
   var stream = fs.createWriteStream('subscribers.txt');
   stream.once('open', function(fd) {
-    console.log('w');
-  });
-  stream.once('open', function(fd) {
     User.find({}, function(err, users) {
       if (err) {
         throw new Error(err);
       }
-    //console.log(users);
       console.log('writing');
       stream.write('Email Address,Username\n');
       users.forEach(function(user) {

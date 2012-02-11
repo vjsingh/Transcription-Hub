@@ -141,9 +141,9 @@ script(type='text/javascript')
   }(document, 'script', 'facebook-jssdk'));
 
   $(function() {
-    $('.search-box').each(function(index, elem) {
-      var trId = $(this).attr('sId');
-      //console.log($(this));
+    var numSearchBoxes = 0;
+    function getHasVoted(div) {
+      var trId = div.attr('sId');
       $.get('/hasVoted/' + trId, function(hasVoted) {
         //console.log(hasVoted);
         if (hasVoted) {
@@ -151,6 +151,11 @@ script(type='text/javascript')
           setVoteArrowColors(hasVoted, trId);
         }
       });
+    }
+    $('.search-box').each(function(index, elem) {
+      numSearchBoxes += 1;
+      //getHasVoted($(this));
+      //console.log($(this));
     });
     function initSearchBoxes() {
       $('#search0').addClass('active');
@@ -191,6 +196,25 @@ script(type='text/javascript')
       }).data('jsp');
     };
     initSearchPane();
+
+    // Get hasVoted as user scrolls, to help loading of page
+    var searchIdNum = 0;
+    var currHeight = 0;
+    var searchPaneHeight = searchPane.height();
+    function getVoteArrowsScroll(yPos) {
+      for (; searchIdNum < numSearchBoxes; searchIdNum++) {
+        if (currHeight > yPos + searchPaneHeight + 50) {
+          break;
+        }
+        var searchDiv = $('#search' + searchIdNum);
+        getHasVoted(searchDiv);
+        var scrollBoxHeight = searchDiv.height();
+        currHeight += scrollBoxHeight;
+      }
+    };
+    searchPane.bind('jsp-scroll-y', function(event, scrollYPos, isAtTop, isAtBottom) {
+      getVoteArrowsScroll(scrollYPos);
+    });
 
     // For sort select
     var list = $('#search-results').find('.jspPane');
