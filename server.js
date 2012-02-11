@@ -1083,12 +1083,9 @@ function doSearch(req, res, search) {
   } else { // search all fields
     search = search.omniSearch;
     if (search === '') {
-      gotTrs(null, []);
-      /* TODO: fix
       type.find()
       .sort('votes', -1)
       .execFind(gotTrs);
-      */
     } else {
       search = makeReg(search);
       type
