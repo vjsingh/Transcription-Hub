@@ -1004,6 +1004,7 @@ function doSearch(req, res, search) {
 
     // Get has voted for all trs
     function finished(newTrs) {
+      //console.log(newTrs);
       res.render('transcriptions', {
         locals: {
           searchItems: newTrs,
@@ -1012,19 +1013,30 @@ function doSearch(req, res, search) {
         }
       });
     }
+    /*
     function addHasVoted(index, acc) {
       if (index === (trs.length)) {
         finished(acc);
       } else {
         var newTr = trs[index];
         getHasVoted(req, newTr.id, function(hasVoted) {
+          //console.log(index);
+          var obj = trs[0];
           newTr.hasVoted = hasVoted;
+          newTr.asdfdsfd = 5;
+          //console.log(newTr);
           acc.push(newTr);
           addHasVoted(index + 1, acc);
         });
       }
     }
-    addHasVoted(0, []);
+    */
+    // TOOD: WTF
+    //var newTr = trs[0];
+    //trs[0].asfdasf = 6;
+    //console.log(trs[0]);
+    //addHasVoted(0, []);
+    finished(trs);
   }
 
   // If strict, match the exact string as a substring
