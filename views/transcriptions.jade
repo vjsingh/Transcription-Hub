@@ -252,7 +252,7 @@ script(type='text/javascript')
       type = type.replace(/ /g, '');
       var descending = false;
       var isNum = false;
-      if (type === 'votes') {
+      if (type === 'votes' || type === 'dateuploaded') {
         descending = true;
         isNum = true;
       }
