@@ -35,6 +35,9 @@ if (IS_LOCAL_MACHINE) {
 }
 process.chdir(serverDir);
 
+function getIsFirefox(req) {
+  return (/firefox/i).test(req.headers['user-agent']);
+}
 app.configure(function(){
   app.set('db-uri', 'mongodb://localhost/' + siteConf.dbName);
   app.set('views', __dirname + '/views');
@@ -82,6 +85,9 @@ app.configure(function(){
     },
     cssScripts: function(req, res) {
       return [];
+    },
+    isFirefox: function(req, res) {
+      return getIsFirefox(req);
     }
   });
   process.on('uncaughtException', function(err) {
@@ -829,8 +835,10 @@ var trDisplayTemple = makeTemplate('transcriptionDisplay');
 
 app.get('/getTranscription/:id', function(req, res) {
   Transcription.findById(req.params.id, function(err, t) {
+    var isFirefox = getIsFirefox(req);
     var html = trDisplayTemple({
-      t: t
+      t: t,
+      isFirefox: isFirefox
     });
     res.json({
       url: '/transcriptions/' + req.params.id,

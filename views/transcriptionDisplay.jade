@@ -48,8 +48,12 @@
       //iframe#trPdf(src=pdfUrl)
       //iframe#trPdf(src=pdfUrl, width='500px', height='600px')
       //iframe#pdfFrame(src=pdfUrl, width='100%', height='100%')
-      iframe#pdfFrame(src=pdfUrl, width='5px', height='6px')
-        You have a very old browser so we can't show you the transcription here, please upgrade to Google Chrome or Firefox!
+      - if (isFirefox)
+        #firefoxWarning
+          | Unfortunately, Firefox does not support inline PDFs. Please use Google Chrome or Safari if you want to see transcriptions in the webpage, or simply download them below:
+      - else
+        iframe#pdfFrame(src=pdfUrl, width='5px', height='6px')
+          You have a very old browser so we can't show you the transcription here, please upgrade to Google Chrome or Firefox!
       p
         a(href=pdfUrlDownload) Download Transcription
     - else
@@ -58,6 +62,7 @@
 
 script(type='text/javascript')
   $(function() {
+    $('.jqueryHide').hide();
     var trId  = $('#trId').attr('trId');
     $.get('/hasVoted/' + trId, function(hasVoted) {
       if (hasVoted === '0') {
@@ -82,7 +87,6 @@ script(type='text/javascript')
     doOnClick('#upVote', '2');
     doOnClick('#downVote', '1');
 
-    $('.jqueryHide').hide();
 
     // Get username from userid
     var userId = $('#uploadedByUsernameLink').attr('userId');

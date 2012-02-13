@@ -7,3 +7,6 @@
 [submodule "public/stylesheets/bs"]
 	path = public/stylesheets/bs
 	url = https://github.com/twitter/bootstrap.git
+[submodule "node_modules/ua-parser"]
+	path = node_modules/ua-parser
+	url = https://github.com/tobie/ua-parser.git
