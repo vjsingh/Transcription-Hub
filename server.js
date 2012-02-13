@@ -1002,8 +1002,6 @@ app.get('/bounty', function(req, res) {
 //    One string that should match any fields
 //    Set of strings that should match all fields
 function doSearch(req, res, search) {
-  console.log(search);
-
   // Bastardized to also take bounties
   function gotTrs(err, trs) {
     if (err) {
