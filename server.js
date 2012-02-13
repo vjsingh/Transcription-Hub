@@ -1049,16 +1049,18 @@ function doSearch(req, res, search) {
       return new RegExp('.?' + search + '.?', 'i');
     }
     var splitArr = search.split(' ');
-    var regSearch = '(';
+    var regSearch = '^';
     var isFirstTime = true;
     splitArr.forEach(function(word) {
-      if (!isFirstTime) {
-        regSearch += '|';
-      }
+      regSearch += '(?=.*?(';
+      //if (!isFirstTime) {
+        //regSearch += '|';
+      //}
       regSearch += word;
+      regSearch += '))';
       isFirstTime = false;
     });
-    regSearch += ')+';
+    regSearch += '.*$';
     return new RegExp(regSearch, 'i');
   }
 
@@ -1089,9 +1091,9 @@ function doSearch(req, res, search) {
     } else {
       search = makeReg(search);
       type
-        .$where('(' + search + ').test(this.title)' +
-          ' || (' + search + ').test(this.artist)' +
-          ' || (' + search + ').test(this.album)')
+        .$where('(' + search + ').test(this.title + this.artist + this.album)')
+          //' || (' + search + ').test(this.artist)' +
+          //' || (' + search + ').test(this.album)')
         .sort('votes', -1)
         .execFind(gotTrs);
     }
