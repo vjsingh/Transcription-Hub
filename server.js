@@ -678,10 +678,10 @@ function doVote(typeVote, userId, trId, cb) {
         }
         if (typeVote === '1') {
           user.downVotes.push(trId);
-          trUser.karmaPoints = user.karmaPoints - 1;
+          trUser.karmaPoints = trUser.karmaPoints - 1;
         } else if (typeVote === '2') {
           user.upVotes.push(trId);
-          trUser.karmaPoints = user.karmaPoints + 1;
+          trUser.karmaPoints = trUser.karmaPoints + 1;
         }
         user.save();
         trUser.save();
