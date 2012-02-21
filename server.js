@@ -419,7 +419,6 @@ app.get('/checkPoints/', function(req, res) {
     var points = parseInt(req.query.bounty.points, 10);
     //User.findById(req.currentUser.id, function(err, user) {
       //if (err) {
-    //console.log("ERROR: " + err);
   //} else {
     if (user.karmaPoints >= points) {
       res.write('true');
@@ -735,7 +734,7 @@ app.get('/doVote/:typeVote/:trId', member, function(req, res) {
 // CRUD for transcriptions
 
 // Create
-function gotNewTranscription(req, res) {
+function gotNewTranscription(req, res, isMultipleFile) {
   // Can post with either a url or a pdf
   var isFilePost = false;
   var file = req.files.transcription.file;
@@ -766,7 +765,12 @@ function gotNewTranscription(req, res) {
       if (err) {
         throw new Error(err);
       }
-      res.redirect('/transcriptions/' + transcription.id);
+      if (isMultipleFile) {
+        res.write('{success: true}');
+        res.end();
+      } else {
+        res.redirect('/transcriptions/' + transcription.id);
+      }
     });
   }
   if (!isFilePost) {
@@ -811,6 +815,16 @@ function gotNewTranscription(req, res) {
 }
 app.post('/transcriptions.:format?', member, function(req, res) {
   gotNewTranscription(req, res);
+});
+app.get('/Multiupload', member, function(req, res) {
+  res.render('multiupload.jade', {
+  });
+});
+app.post('/multipletranscriptions', member, function(req, res) {
+  req.files.transcription = {};
+  req.files.transcription.file = req.files.qqfile;
+  delete req.files.qqfile;
+  gotNewTranscription(req, res, true);
 });
 app.post('/asdqwezxc', function(req, res) {
   req.currentUser = {

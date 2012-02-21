@@ -1,0 +1,48 @@
+// Validate
+//script(type='text/javascript', src='/javascripts/forms.js')
+
+// File uploader
+script(type='text/javascript', src='/lib/file-uploader/client/fileuploader.js')
+link(rel='stylesheet', href='/lib/file-uploader/client/fileuploader.css')
+
+
+.row-fluid
+  //.span6.offset2 TODO when bs fixes
+  //.span6.center-content
+  .center-content.width50
+    .content-box.box-with-shadow
+      //#uploadForm.form-horizontal.center-content(method='post', enctype="multipart/form-data", action='/transcriptions.json')
+      | Drag and drop files, or click to upload!
+      #file-uploader
+      //
+        #uploadForm.form-horizontal.center-content
+          fieldset
+            legend Upload Multiple Transcriptions
+            .control-group
+              label.control-label File (PDF)
+              .controls
+                input.fillone(type='file', name='transcription[file]', accept='pdf', fillone=true, multiple='')
+            #uploadDisclaimer
+              | By Uploading, you agree to our
+              a(href='/about') terms and conditions
+            .actions
+              input.btn.primary(type='submit', value='Upload')
+              button.btn(type='reset') Cancel
+
+script(type='text/javascript')
+  $(function() {
+    var uploader = new qq.FileUploader({
+      //element: $('#uploadForm'),
+      element: $('#file-uploader')[0],
+      action: '/multipletranscriptions',
+      encoding: 'multipart',
+      allowedExtensions: ['pdf'],
+      params: {
+        title: 'Unknown',
+        artist: 'Unknown',
+        album: 'Unknown',
+        instrument: 'Unknown',
+        description: ''
+      }
+    });
+  });

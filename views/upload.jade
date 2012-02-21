@@ -9,6 +9,7 @@ script(type='text/javascript', src='/javascripts/forms.js')
       form#uploadForm.form-horizontal.center-content(method='post', enctype="multipart/form-data", action='/transcriptions.json')
         fieldset
           legend Upload a transcription
+          a(href='/Multiupload') New, multi-pdf uploader!
           .control-group
             label.control-label(for='title') Title
             .controls
