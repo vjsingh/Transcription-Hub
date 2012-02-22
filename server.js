@@ -81,10 +81,15 @@ app.configure(function(){
       return req.currentUser || new User();
     },
     scripts: function(req, res) {
-      return [];
+      var scripts = [];
+      if (IS_LOCAL_MACHINE) {
+        scripts.push('http://localhost:8001/vogue-client.js');
+      }
+      return scripts;
     },
     cssScripts: function(req, res) {
-      return [];
+      var scripts = [];
+      return scripts;
     },
     isFirefox: function(req, res) {
       return getIsFirefox(req);

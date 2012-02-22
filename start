@@ -1,0 +1,20 @@
+#!/bin/bash
+rm -f ./pid
+
+# Start Node
+STARTNODE=./z
+$STARTNODE&
+PID=$!
+echo $PID > ./pid
+
+#Start Vogue
+vogue public &
+PID=$!
+echo $PID > ./pid
+
+# Start watching less files
+watch-less&
+PID=$!
+echo $PID > ./pid
+
+echo $BASHPID
