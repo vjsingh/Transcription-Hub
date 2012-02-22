@@ -24,6 +24,9 @@
     "express": "2.5.x",
     "validator": "0.3.9",
     "express-validator": "0.1.x",
-    "connect-mongo": "0.1.x"
+    "connect-mongo": "0.1.x",
+    "ua-parser": "0.2.x",
+    "watch-less": "0.0.x",
+    "jquery": "1.6.x"
   }
 }
