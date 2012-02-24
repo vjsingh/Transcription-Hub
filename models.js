@@ -81,7 +81,7 @@ function defineModels(mongoose, fn) {
     'upVotes': {type: [String], 'default': []},
     'downVotes': {type: [String], 'default': []},
 
-    'karmaPoints': {type: Number, 'default': 0},
+    'karmaPoints': {type: Number, 'default': 10},
     'personalWebsite': {type: String},
     'hashed_password': String,
     'registerTime': {type: Number},
@@ -140,7 +140,6 @@ function defineModels(mongoose, fn) {
     if (this.karmaPoints < 0) {
       this.karmaPoints = 0;
     }
-    console.log('after:', this.karmaPoints);
     next();
   });
 

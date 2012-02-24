@@ -1,15 +1,16 @@
 .jqueryHide#userId(userId=profileUser.id)
 .profile-info.box-with-shadow.content-box
-  h2 User Profile
+  h2.inline User Profile
+  #points.display-points.popover(rel='popover', data-content='User your Karma Points to request a transcription at the top!', data-placement='bottom', data-original-title='Free Karma Points!')
+    = profileUser.karmaPoints
+    .display-points-text
+      | Karma Points (?)
   #username
     | Username:
     = profileUser.username
   #email
     | Email:
     = profileUser.email
-  #points
-    | Karma Notes:
-    = profileUser.karmaPoints
   - if (profileUser.personalWebsite)
     | Website:
     = profileUser.personalWebsite
@@ -34,5 +35,8 @@ script(type='text/javascript')
     });
     $.get('/userBounties/' + userId, function(data) {
       $('#profBountiesData').html(data.html);
+    });
+    $('.popover').popover().click(function(e) {
+      e.preventDefault();
     });
   });

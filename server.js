@@ -374,7 +374,7 @@ app.post('/register', function(req, res) {
   user.save(function(err) {
     if (err) return userSaveFailed();
 
-    req.flash('info', 'Your account has been created');
+    //req.flash('info', 'Your account has been created');
     //emails.sendWelcome(user);
 
     req.session.user_id = user.id;
@@ -1176,5 +1176,13 @@ Transcription.find({title: 'Unknown'}, function(err, trs) {
       tr.save();
     }
     */
+  });
+});
+User.find({}, function(err, users) {
+  users.forEach(function(user) {
+    if (user.karmaPoints < 10) {
+      user.karmaPoints = user.karmaPoints + 10;
+      user.save();
+    }
   });
 });

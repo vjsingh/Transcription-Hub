@@ -26,8 +26,7 @@ ul.bounty-display
         input.btn.primary(type='submit', value='Add to Bounty')
   .fillRequest
     | Fill Request (
-    a#fillRequestInfo.inline(href='#', rel='popover', data-content='The Transcription ID is found at the end of the url where you can view the transcription', data-placement='below', title='What is the Transcription ID?')
-      |?
+    a#fillRequestInfo.inline(href='#', rel='popover', data-content='The Transcription ID is found at the end of the url where you can view the transcription', data-placement='bottom', data-original-title='What is the Transcription ID?') ?
     |):
     form.inline(method='post', action='/fillBounty')
       input.required.xlarge(name='bountyId', type='text', placeholder='Enter your Transcription ID')
