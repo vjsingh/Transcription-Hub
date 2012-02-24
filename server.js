@@ -319,6 +319,8 @@ app.post('/addToBounty', member, function(req, res) {
 });
 
 app.get('/fillBounty', member, function(req, res) {
+  console.log("SOMEONE TRYING TO FILL!");
+  console.log('username:', req.currentUser.username);
   res.render('unfinished');
 });
 app.post('/fillBounty', member, function(req, res) {
