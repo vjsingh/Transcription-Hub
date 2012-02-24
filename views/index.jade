@@ -4,7 +4,14 @@
       .saxIconLarge.pull-left
         img(src='/images/saxIconLarge.png')
       .welcomeText.pull-left
-        .myH1 Welcome
+        .myH1.inline Welcome
+        p.inline.pull-right
+          strong#homepageTranscriptionCount
+            = trCount
+          | &nbspTranscriptions,
+          strong#homepageTranscriptionCount
+            = userCount
+          | &nbspUsers, and counting!
         p Looking for a jazz transcription? Look no further! Transcription Hub was created to allow jazz fans like you to share and discuss transcriptions of jazz solos. Countless transcriptions are scattered throughout the internet on blogs, forums, and personal websites; we hope to gather all of these into one searchable index of every jazz solo.
         p
           - if (typeof(user) !== 'undefined' && user && user.username)

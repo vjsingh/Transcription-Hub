@@ -225,9 +225,21 @@ app.get('/svg', function(req, res) {
   res.render('svg', {layout: ''});
 });
 app.get('/', function(req, res) {
-  res.render('index', {
-    locals: {
+  Transcription.count({}, function(err, trCount) {
+    if (err) {
+      throw new Error(err);
     }
+    User.count({}, function(err, userCount) {
+      if (err) {
+        throw new Error(err);
+      }
+      res.render('index', {
+        locals: {
+          trCount: trCount,
+          userCount: userCount
+        }
+      });
+    });
   });
 });
 app.get('/privacy', function(req, res) {
