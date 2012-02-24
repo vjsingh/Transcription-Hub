@@ -1,30 +1,34 @@
 script(type='text/javascript', src='/javascripts/forms.js')
 
-h2 New Bounty
-
-form#newBounty(method='post', action='/createBounty')
-  fieldset
-      legend Submit a new Transcription request
-      .clearfix
-        label(for='title') Title
-        .input
-          input.xlarge.required(id='nbountyTitle', name='bounty[title]', type='text', placeholder='Title', minlength='3')
-      .clearfix
-        label(for='Artist') Artist
-        .input
-          input.xlarge.required(id='nbountyArtist', name='bounty[artist]', type='text', placeholder='Artist')
-      .clearfix
-        label(for='Album') Album
-        .input
-          input.xlarge.required(id='nbountyAlbum', name='bounty[album]', type='text', placeholder='Album')
-      .clearfix
-        label(for='Instrument') Instrument
-        .input
-          input.xlarge.required(id='nbountyInstrument', name='bounty[instrument]', type='text', placeholder='Instrument')
-      .clearfix
-        label(for='points') Karma Points
-        .input
-          input.xlarge.required(id='nbountyPoints', name='bounty[points]', placeholder='Points to add to bounty', type='number', min=1, remote='/checkPoints/')
-      .actions
-        input.btn.primary(type='submit', value='Submit')
-        button.btn(type='reset') Cancel
+.row-fluid
+  //.span6.offset2 TODO when bs fixes
+  //.span6.center-content
+  .center-content.width50
+    .content-box.box-with-shadow
+      form#newBounty.form-horizontal.center-content(method='post', action='/createBounty')
+        h2 New Bounty
+        fieldset
+            legend Submit a new Transcription request
+            .control-group
+              label.control-label(for='title') Title
+              .controls
+                input.xlarge.required(id='nbountyTitle', name='bounty[title]', type='text', placeholder='Title', minlength='3')
+            .control-group
+              label.control-label(for='Artist') Artist
+              .controls
+                input.xlarge.required(id='nbountyArtist', name='bounty[artist]', type='text', placeholder='Artist')
+            .control-group
+              label.control-label(for='Album') Album
+              .controls
+                input.xlarge.required(id='nbountyAlbum', name='bounty[album]', type='text', placeholder='Album')
+            .control-group
+              label.control-label(for='Instrument') Instrument
+              .controls
+                input.xlarge.required(id='nbountyInstrument', name='bounty[instrument]', type='text', placeholder='Instrument')
+            .control-group
+              label.control-label(for='points') Karma Points
+              .controls
+                input.xlarge.required(id='nbountyPoints', name='bounty[points]', placeholder='Points to add to bounty', type='number', min=1, remote='/checkPoints/')
+            .actions
+              input.btn.btn-primary(type='submit', value='Submit')
+              button.btn(type='reset') Cancel
