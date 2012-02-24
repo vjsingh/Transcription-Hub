@@ -766,6 +766,9 @@ function gotNewTranscription(req, res, isMultipleFile) {
   function addTranscription(transcription) {
     transcription.userId = req.currentUser.id;
     transcription.uploadTime = Date.now();
+    if (transcription.title === 'Unknown') {
+      transcription.title = transcription.fileLocation;
+    }
     transcription.save(function(err) {
       if (err) {
         throw new Error(err);
@@ -1161,13 +1164,17 @@ function makeEmailList() {
   });
 }
 makeEmailList();
-/*
-Transcription.find({}, function(err, trs) {
+Transcription.find({title: 'Unknown'}, function(err, trs) {
   trs.forEach(function(tr) {
+    if (tr.title === 'Unknown') {
+      tr.title = tr.fileLocation;
+    }
+    tr.save();
+    /*
     if (!tr.uploadTime) {
       tr.uploadTime = 1327262166151;
       tr.save();
     }
+    */
   });
 });
-*/

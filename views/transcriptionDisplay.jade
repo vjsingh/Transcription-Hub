@@ -14,7 +14,7 @@
               = t.votes
           a#downVote(title="Mediocre or Junk Transcription", href='#')
             img.downVoteImg(src='/images/arrow2.png')
-      .span5
+      .span9
         h5.trSongInfoDisplay
           .display-title
             = t.title
@@ -55,6 +55,8 @@
         iframe#pdfFrame(src=pdfUrl, width='5px', height='6px')
           You have a very old browser so we can't show you the transcription here, please upgrade to Google Chrome or Firefox!
       p
+        =t.fileLocation
+        br
         a(href=pdfUrlDownload) Download Transcription
     - else
       h2
@@ -111,8 +113,8 @@ script(type='text/javascript')
 
     // Resize iframe size dynamically, according to sidebar
     function resizeIframe() {
-      $('.content-box').height($('.sidebar-nav').height());
-      $('#pdfFrame').height($('.content-box').height());
+      $('.content-box').height($('.sidebar-nav').height() + 35);
+      $('#pdfFrame').height($('.content-box').height() - 60);
       $('#pdfFrame').width($('.trDisplay').width());
     }
     $(window).resize(function() {
