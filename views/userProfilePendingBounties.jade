@@ -1,0 +1,59 @@
+| Some of your requests have been fulfilled! Confirm whether they match your expectation:
+.br
+- for (var bIndex in bounties)
+  - b = bounties[bIndex]
+  a.bounty(href='/bounty/' + b.id)
+    = b.points
+    | &nbsp
+    = b.title
+    |  by
+    = b.artist
+  br
+  | Fulfilled with:
+  a(href='/transcriptions/' + b.transcriptionId) This Transcription
+  br
+  .confirmButtons
+    button.correctTr.btn.btn-success(bId=b.id) Correct
+    button.incorrectTr.btn.btn-danger(bId=b.id) Incorrect
+  .alert.alert-success.fade.in.jqueryHide
+    //a.close(data-dismiss='alert', href='#') x
+    Strong Thanks! The bounty is now filled!
+  .alert.alert-success.fade.in.jqueryHide
+    //a.close(data-dismiss='alert', href='#') x
+    Strong Thanks! The suggestion has been rejected!
+  br
+  br
+
+script(type='text/javascript')
+  $(function() {
+    $('.jqueryHide').hide();
+    function confirmedBounty(div, isAccepted) {
+      var parent = $(div).parent()
+      parent.hide();
+      if (isAccepted) {
+        parent.next().show();
+      } else {
+        parent.next().next().show();
+      }
+    }
+    $('.correctTr').click(function(e) {
+      var div = this;
+      var bId = $(this).attr('bId');
+      $.get('/confirmBountyTr/true/' + bId, function(result) {
+        if (result) {
+          confirmedBounty(div, true);
+        }
+      });
+    });
+    $('.incorrectTr').click(function(e) {
+      var div = this;
+      var bId = $(this).attr('bId');
+      $.get('/confirmBountyTr/false/' + bId, function(result) {
+        if (result) {
+          confirmedBounty(div);
+        }
+      });
+    });
+    //$.get('/userPendingBounties/' + userId, function(data) {
+    //});
+  });
