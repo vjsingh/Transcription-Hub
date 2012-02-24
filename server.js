@@ -121,6 +121,7 @@ app.configure('test', function() {
 app.error(function(err, req, res, next) {
   console.log("ZQX GOT ERROR, in app.error");
   console.log(err);
+  console.log(err.stack);
   res.render('500.jade', {
     error: err
   });
@@ -280,6 +281,7 @@ function addToBounty(bounty, points, req, res) {
   bounty.points = parseInt(bounty.points, 10) + parseInt(points, 10);
   bounty.save();
   //User.findById(req.currentUser.id, function(err, user) {
+  var user = req.currentUser;
   if (user.karmaPoints < points) {
     console.log('ZQX Cheater: ' + user.id + user.username);
     throw new Error('Stop trying to cheat! Your account has been flagged');
@@ -425,7 +427,7 @@ app.get('/checkPoints/', function(req, res) {
     //User.findById(req.currentUser.id, function(err, user) {
       //if (err) {
   //} else {
-    if (user.karmaPoints >= points) {
+    if (req.currentUser.karmaPoints >= points) {
       res.write('true');
       res.end();
     } else {
