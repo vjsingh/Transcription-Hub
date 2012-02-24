@@ -1,5 +1,7 @@
 - for (var bIndex in bounties)
   - b = bounties[bIndex]
+  -if (b.fulfilled)
+    | Filled! &nbsp
   a.bounty(href='/bounty/' + b.id)
     = b.points
     | &nbsp

@@ -13,3 +13,6 @@
 [submodule "public/lib/file-uploader"]
 	path = public/lib/file-uploader
 	url = https://github.com/valums/file-uploader.git
+[submodule "public/lib/ajax-form"]
+	path = public/lib/ajax-form
+	url = https://github.com/malsup/form.git

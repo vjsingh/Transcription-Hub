@@ -1,4 +1,7 @@
 script(type='text/javascript', src='/javascripts/forms.js')
+script(type='text/javascript', src='/lib/ajax-form/jquery.form.js') // Ajax Form
+//script(type='text/javascript', src='/stylesheets/bs/js/bootstrap-alert.js')
+
 
 ul.bounty-display
   .display-points
@@ -14,27 +17,54 @@ ul.bounty-display
       = b.album
   .display-instrument
     = b.instrument
-  .bountyInfoAddForm
-    form#addBounty(method='post', action='/addToBounty/')
-      fieldset
-        input.jqueryHide(type='text', name='bountyId', value=b.id)
-        .clearfix
-          // required b/c of 'parent().parent()' in forms.js
-          .input2
-            input.required(name='bounty[points]', placeholder='Points to add to bounty', type='number', min=1, remote='/checkPoints/')
-      actions
-        input.btn.primary(type='submit', value='Add to Bounty')
-  .fillRequest
-    | Fill Request (
-    a#fillRequestInfo.inline(href='#', rel='popover', data-content='The Transcription ID is found at the end of the url where you can view the transcription', data-placement='bottom', data-original-title='What is the Transcription ID?') ?
-    |):
-    form.inline(method='post', action='/fillBounty')
-      input.required.xlarge(name='bountyId', type='text', placeholder='Enter your Transcription ID')
-      input.btn.primary(type='submit', value='Submit')
+  - if (b.hasUploaded)
+    .bountyFulfilledTr
+      - if (b.fulfilled)
+        | Fulfilled! Heres
+        a(href='/transcriptions/' + b.transcriptionId) the transcription
+        | !
+      - else
+        | Waiting for the creator of the bounty to confirm
+        a(href='/transcriptions/' + b.transcriptionId) this transcription
+        | &nbspis correct
+  - else
+    .bountyInfoAddForm
+      form#addBounty(method='post', action='/addToBounty/')
+        fieldset
+          input.jqueryHide(type='text', name='bountyId', value=b.id)
+          .clearfix
+            // required b/c of 'parent().parent()' in forms.js
+            .input2
+              input.required(name='bounty[points]', placeholder='Points to add to bounty', type='number', min=1, remote='/checkPoints/')
+        actions
+          input.btn.primary(type='submit', value='Add to Bounty')
+    .fillRequest
+      | Fill Request (
+      a#fillRequestInfo.inline(href='#', rel='popover', data-content='The Transcription ID is found at the end of the url where you can view the transcription', data-placement='bottom', data-original-title='What is the Transcription ID?') ?
+      |):
+      form#fillForm.inline(method='post', action='/fillBounty/' + b.id)
+        input.required.xlarge(name='trId', type='text', placeholder='Enter your Transcription ID')
+        input.btn.primary(type='submit', value='Submit')
+    #invalidTrAlert.alert.alert-error.fade.in
+      a#closeInvalidTrAlert.close(data-dismiss='alert', href='#') x
+      Strong Holy Guacamole!
+      | Invalid Transcription Id!
 
 script(type='text/javascript')
   $(function() {
+    $('.alert').hide();
+    $('#fillForm').ajaxForm(function(status) {
+      if (status === 'INVALID_TRANSCRIPTION') {
+        $('#invalidTrAlert').show();
+      } else if (status === 'SUCCESS') {
+        window.location.reload();
+      }
+    });
     $('#fillRequestInfo').popover().click(function(e) {
       e.preventDefault();
+    });
+    $('#closeInvalidTrAlert').click(function(e) {
+      e.preventDefault();
+      $('#invalidTrAlert').hide();
     });
   });

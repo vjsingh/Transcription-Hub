@@ -5,19 +5,22 @@
     = profileUser.karmaPoints
     .display-points-text
       | Karma Points (?)
-  #username
-    | Username:
-    = profileUser.username
-  #email
-    | Email:
-    = profileUser.email
-  - if (profileUser.personalWebsite)
-    | Website:
-    = profileUser.personalWebsite
-  #joinDate
-    - if (typeof(profileUser.registerDateStr) !== 'undefined')
-      | Joined on
-      = profileUser.registerDateStr
+  .row-fluid
+    #userInfo.span4
+      #username
+        | Username:
+        = profileUser.username
+      #email
+        | Email:
+        = profileUser.email
+      - if (profileUser.personalWebsite)
+        | Website:
+        = profileUser.personalWebsite
+      #joinDate
+        - if (typeof(profileUser.registerDateStr) !== 'undefined')
+          | Joined on
+          = profileUser.registerDateStr
+    #pendingBounties.span6
   #profTranscriptions
     | Transcriptions:
     #profTranscriptionData
@@ -35,6 +38,11 @@ script(type='text/javascript')
     });
     $.get('/userBounties/' + userId, function(data) {
       $('#profBountiesData').html(data.html);
+    });
+    $.get('/userPendingBounties/' + userId, function(data) {
+      if (data) {
+        $('#pendingBounties').html(data.html);
+      }
     });
     $('.popover').popover().click(function(e) {
       e.preventDefault();

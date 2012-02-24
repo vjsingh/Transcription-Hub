@@ -158,7 +158,11 @@ script(type='text/javascript')
       //console.log($(this));
     });
     function initSearchBoxes() {
-      $('#search0').addClass('active');
+      var activeSearch = $('#search0');
+      activeSearch.addClass('active');
+      if (activeSearch.attr('sid')) {
+        parent.location.hash= 'Transcription_ID=' + $('#search0').attr('sid');
+      }
 
       $('.search-box').click(function() {
         var ajaxUrl = $(this).attr('ajaxUrl');

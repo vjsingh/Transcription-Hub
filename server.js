@@ -318,13 +318,26 @@ app.post('/addToBounty', member, function(req, res) {
   });
 });
 
+// Shouldn't happen
 app.get('/fillBounty', member, function(req, res) {
-  console.log("SOMEONE TRYING TO FILL!");
-  console.log('username:', req.currentUser.username);
-  res.render('unfinished');
+  res.redirect('/');
 });
-app.post('/fillBounty', member, function(req, res) {
-  res.render('unfinished');
+app.post('/fillBounty/:bId', member, function(req, res) {
+  var bId = req.params.bId;
+  var trId = req.body.trId;
+  Transcription.findById(trId, function(err, tr) {
+    if (!tr) {
+      res.json('INVALID_TRANSCRIPTION');
+    } else {
+      Bounty.findById(bId, function(err, bounty) {
+        bounty.hasUploaded = true;
+        bounty.transcriptionId = trId;
+        bounty.filledById = req.currentUser.id;
+        bounty.save();
+      });
+      res.json('SUCCESS');
+    }
+  });
 });
 
 // Users
@@ -441,8 +454,7 @@ app.get('/checkPoints/', function(req, res) {
   }
 });
 
-var profileTrsDisplay = fs.readFileSync('./views/userProfileTranscriptions.jade');
-var profileTrsDisplayTemple = jade.compile(profileTrsDisplay.toString('utf8'));
+var profileTrsDisplayTemple = makeTemplate('userProfileTranscriptions');
 app.get('/userTranscriptions/:userId', member, function(req, res) {
   Transcription.find({userId: req.params.userId}, function(err, trs) {
     if (err) {
@@ -457,8 +469,7 @@ app.get('/userTranscriptions/:userId', member, function(req, res) {
   });
 });
 
-var profileBountyDisplay = fs.readFileSync('./views/userProfileBounties.jade');
-var profileBountyDisplayTemple = jade.compile(profileBountyDisplay.toString('utf8'));
+var profileBountyDisplayTemple = makeTemplate('userProfileBounties');
 app.get('/userBounties/:userId', member, function(req, res) {
   Bounty.find({userId: req.params.userId}, function(err, bounties) {
     if (err) {
@@ -470,6 +481,51 @@ app.get('/userBounties/:userId', member, function(req, res) {
     res.json({
       html: html
     });
+  });
+});
+
+var profilePendingBountyDisplayTemple = makeTemplate('userProfilePendingBounties');
+app.get('/userPendingBounties/:userId', member, function(req, res) {
+  Bounty.find({userId: req.params.userId, hasUploaded: true, fulfilled: false}, function(err, bounties) {
+    if (err) {
+      throw new Error(err);
+    }
+    console.log(bounties);
+    if (!bounties || bounties.length === 0) {
+      res.json(false);
+    } else {
+      var html = profilePendingBountyDisplayTemple({
+        bounties: bounties
+      });
+      res.json({
+        html: html
+      });
+    }
+  });
+});
+
+app.get('/confirmBountyTr/:isCorrect/:bId', function(req, res) {
+  Bounty.findById(req.params.bId, function(err, bounty) {
+    if (err) {
+      throw new Error(err);
+    }
+    if (req.params.isCorrect === 'true') {
+      User.findById(bounty.filledById, function(err, user) {
+        if (err) {
+          throw new Error(err);
+        }
+        user.karmaPoints = user.karmaPoints + bounty.points;
+        user.save();
+        bounty.fulfilled = true;
+        bounty.save();
+        res.json(true);
+      });
+    } else {
+      bounty.hasUploaded = false;
+      bounty.transcriptionId = '';
+      bounty.save();
+      res.json(true);
+    }
   });
 });
 
@@ -1102,6 +1158,7 @@ function doSearch(req, res, search) {
   } else {
     type = Bounty;
   }
+  // Search by field
   if (search.omniSearch !== '' && !search.omniSearch) {
     var title = makeReg(search.title, true);
     var artist = makeReg(search.artist, true);
@@ -1114,7 +1171,9 @@ function doSearch(req, res, search) {
       .where('instrument', instrument)
       .sort('votes', -1)
       .execFind(gotTrs);
-  } else { // search all fields
+
+  // Omnisearch -- Search all fields
+  } else {
     search = search.omniSearch;
     if (search === '') {
       type.find()

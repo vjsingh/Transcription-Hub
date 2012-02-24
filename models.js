@@ -195,6 +195,7 @@ function defineModels(mongoose, fn) {
   Bounty = new Schema({
     'hasUploaded': {type: Boolean, 'default': false},
     'fulfilled': {type: Boolean, 'default':false},
+    'filledById': {type: ObjectId},
     'transcriptionId': { type: String},
     'points': {type: Number},
     'title': {type: String, index: true},
