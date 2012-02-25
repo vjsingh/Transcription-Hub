@@ -498,22 +498,28 @@ app.get('/userBounties/:userId', member, function(req, res) {
 
 var profilePendingBountyDisplayTemple = makeTemplate('userProfilePendingBounties');
 app.get('/userPendingBounties/:userId', member, function(req, res) {
-  Bounty.find({userId: req.params.userId, hasUploaded: true, fulfilled: false}, function(err, bounties) {
-    if (err) {
-      throw new Error(err);
-    }
-    console.log(bounties);
-    if (!bounties || bounties.length === 0) {
-      res.json(false);
-    } else {
-      var html = profilePendingBountyDisplayTemple({
-        bounties: bounties
-      });
-      res.json({
-        html: html
-      });
-    }
-  });
+  // only show for own profile
+  console.log(req.params.userId, req.currentUser.id);
+  if (req.params.userId !== req.currentUser.id) {
+    res.json(false);
+  } else {
+    Bounty.find({userId: req.params.userId, hasUploaded: true, fulfilled: false}, function(err, bounties) {
+      if (err) {
+        throw new Error(err);
+      }
+      console.log(bounties);
+      if (!bounties || bounties.length === 0) {
+        res.json(false);
+      } else {
+        var html = profilePendingBountyDisplayTemple({
+          bounties: bounties
+        });
+        res.json({
+          html: html
+        });
+      }
+    });
+  }
 });
 
 app.get('/confirmBountyTr/:isCorrect/:bId', function(req, res) {
