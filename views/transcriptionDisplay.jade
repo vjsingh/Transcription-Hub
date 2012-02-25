@@ -4,6 +4,9 @@
 
 .row-fluid
   .span6.trDisplay
+    #ownTranscription.alert.alert-error.fade.in.jqueryHide
+      a.close(data-dismiss='alert', href='#') x
+      Strong Can't vote on your own transcriptions!
     .row.trDisplayInfo
       .span1
         .votesArrows(class=t.id)
@@ -82,6 +85,8 @@ script(type='text/javascript')
           if (obj && obj.success) {
             setVoteArrowColors(typeVote, trId);
             $('.' + trId + ' .numVotes').html(obj.numVotes);
+          } else if (obj && !obj.success && obj.ownTranscription) {
+            $('#ownTranscription').show();
           }
         });
       });
@@ -121,4 +126,10 @@ script(type='text/javascript')
       resizeIframe();
     })
     resizeIframe();
+
+    // Hide instead of closing on close
+    $('.close').click(function(e) {
+      e.preventDefault();
+      $(this).parent().hide();
+    });
   });

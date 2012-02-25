@@ -734,44 +734,61 @@ function removeVote(typeVote, userId, trId, cb) {
     });
   });
 }
-function doVote(typeVote, userId, trId, cb) {
+function doVote(typeVote, userId, trId, req, res) {
   Transcription.findById(trId, function(err, tr) {
     if (err) {
       throw new Error(err);
     }
-    if (typeVote === '1') {
-      tr.downVotes = tr.downVotes + 1;
-    } else if (typeVote === '2') {
-      tr.upVotes = tr.upVotes + 1;
-    }
 
-    // can't use tr.votes b/c hasn't saved yet
-    numVotes = tr.upVotes - tr.downVotes;
-    trUserId = tr.userId;
-    tr.save();
-
-    User.findById(userId, function(err, user) {
-      if (err) {
-        throw new Error(err);
+    // Can't vote for your own transcriptions
+    console.log(tr.userId, userId);
+    if (userId === tr.userId + '') {
+      res.end(JSON.stringify({
+        success: false,
+        ownTranscription: true
+      }));
+    } else {
+      if (typeVote === '1') {
+        tr.downVotes = tr.downVotes + 1;
+      } else if (typeVote === '2') {
+        tr.upVotes = tr.upVotes + 1;
       }
-      User.findById(trUserId, function(err, trUser) {
+
+      // can't use tr.votes b/c hasn't saved yet
+      numVotes = tr.upVotes - tr.downVotes;
+      trUserId = tr.userId;
+      tr.save();
+
+      User.findById(userId, function(err, user) {
         if (err) {
           throw new Error(err);
         }
-        if (typeVote === '1') {
-          user.downVotes.push(trId);
-          trUser.karmaPoints = trUser.karmaPoints - 1;
-        } else if (typeVote === '2') {
-          user.upVotes.push(trId);
-          trUser.karmaPoints = trUser.karmaPoints + 1;
-        }
-        user.save();
-        trUser.save();
-        cb(true, numVotes);
+        User.findById(trUserId, function(err, trUser) {
+          if (err) {
+            throw new Error(err);
+          }
+          if (!trUser || ! user) {
+            throw new Error('ERROR IN DO VOTE');
+          }
+          if (typeVote === '1') {
+            user.downVotes.push(trId);
+            trUser.karmaPoints = trUser.karmaPoints - 1;
+          } else if (typeVote === '2') {
+            user.upVotes.push(trId);
+            trUser.karmaPoints = trUser.karmaPoints + 1;
+          }
+          user.save();
+          trUser.save();
+          res.end(JSON.stringify({
+            success: true,
+            numVotes: numVotes
+          }));
+        });
       });
-    });
+    }
   });
 }
+
 app.get('/doVote/:typeVote/:trId', member, function(req, res) {
   var trId = req.params.trId;
   var typeVote = req.params.typeVote + '';
@@ -785,28 +802,16 @@ app.get('/doVote/:typeVote/:trId', member, function(req, res) {
 
     // Never voted
     if (hasVoted === '0') {
-      doVote(typeVote, userId, trId, function(success, numVotes) {
-        res.end(JSON.stringify({
-          success: success,
-          numVotes: numVotes
-        }));
-      });
-
+      doVote(typeVote, userId, trId, req, res);
     // Change vote
     } else if (hasVoted !== typeVote) {
       removeVote(typeVote, userId, trId, function(valid) {
         if (!valid) {
           res.end(failObjStr);
         } else {
-          doVote(typeVote, userId, trId, function(success, numVotes) {
-            res.end(JSON.stringify({
-              success: success,
-              numVotes: numVotes
-            }));
-          });
+          doVote(typeVote, userId, trId, req, res);
         }
       });
-
     // Don't let vote again
     } else {
       res.end(failObjStr);
