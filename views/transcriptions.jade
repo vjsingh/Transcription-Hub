@@ -20,7 +20,7 @@
         - if (type === 'transcriptions')
           h5 Search Transcriptions
         - else
-          a.btn.primary(href='/createBounty/') + &nbsp   Create Bounty
+          a.btn.btn-primary(href='/createBounty/') + &nbsp   Create Bounty
           h5 Search Bounties
         form#searchSidebar(method='post', action='/search')
           input(type='text', name='search[title]', placeholder='Title', value=search.title || "")
