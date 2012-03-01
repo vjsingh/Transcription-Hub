@@ -51,7 +51,7 @@
         input(type='hidden', id='numSearchItems', value=numSearchItems)
         .search-pane#search-results
           - for (var sIndex in searchItems)
-            - if (sIndex < 100)
+            - if (sIndex <= 100)
               - divName = 'search' + sIndex
               - s = searchItems[sIndex]
               - if (type === 'transcriptions')
@@ -88,9 +88,9 @@
                       .votes.jqueryHide
                         = s.votes
               br
-            - else if (sIndex == 100)
+            - else if (sIndex == 101)
               .asdf
-                | Results clipped! Too many results, try narrowing your search.
+                | Results clipped! Too many results (more than 100), try narrowing your search.
     .span9
       .content.box-with-shadow.content-box
         #search-display
