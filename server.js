@@ -1113,7 +1113,6 @@ function doSearch(req, res, search) {
       throw new Error(err);
     }
 
-    // Get has voted for all trs
     function finished(newTrs) {
       //console.log(newTrs);
       res.render('transcriptions', {

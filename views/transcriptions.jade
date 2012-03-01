@@ -51,42 +51,46 @@
         input(type='hidden', id='numSearchItems', value=numSearchItems)
         .search-pane#search-results
           - for (var sIndex in searchItems)
-            - divName = 'search' + sIndex
-            - s = searchItems[sIndex]
-            - if (type === 'transcriptions')
-              - ajaxUrl = '/getTranscription/' + s.id
-            - else
-              - ajaxUrl = '/getBounty/' + s.id
-            //div(id=divName, ajaxUrl=ajaxUrl, sId=s.id, hasVoted=s.hasVoted).row.search-box.btn
-            div(id=divName, ajaxUrl=ajaxUrl, sId=s.id).row.search-box.btn
-              .row
-                .span
-                  - if (type === 'transcriptions')
-                    .votesArrows(class=searchItems[sIndex].id)
-                      img.upVoteImg(src='/images/arrow2Up.png')
-                      .numKarmaSearch.numVotes
+            - if (sIndex < 200)
+              - divName = 'search' + sIndex
+              - s = searchItems[sIndex]
+              - if (type === 'transcriptions')
+                - ajaxUrl = '/getTranscription/' + s.id
+              - else
+                - ajaxUrl = '/getBounty/' + s.id
+              //div(id=divName, ajaxUrl=ajaxUrl, sId=s.id, hasVoted=s.hasVoted).row.search-box.btn
+              div(id=divName, ajaxUrl=ajaxUrl, sId=s.id).row.search-box.btn
+                .row
+                  .span
+                    - if (type === 'transcriptions')
+                      .votesArrows(class=searchItems[sIndex].id)
+                        img.upVoteImg(src='/images/arrow2Up.png')
+                        .numKarmaSearch.numVotes
+                          = s.votes
+                        img.downVoteImg(src='/images/arrow2.png')
+                    - else
+                      .numPointsBountySearch
+                        = s.points
+                  .span
+                    .search-result-fields
+                      .title
+                        = s.title
+                      .artist
+                        = s.artist
+                      .album
+                        = s.album
+                      .instrument
+                        = s.instrument
+                      .readable-date-uploaded
+                        = s.uploadDateStr
+                      .dateuploaded.jqueryHide
+                        = s.uploadTime
+                      .votes.jqueryHide
                         = s.votes
-                      img.downVoteImg(src='/images/arrow2.png')
-                  - else
-                    .numPointsBountySearch
-                      = s.points
-                .span
-                  .search-result-fields
-                    .title
-                      = s.title
-                    .artist
-                      = s.artist
-                    .album
-                      = s.album
-                    .instrument
-                      = s.instrument
-                    .readable-date-uploaded
-                      = s.uploadDateStr
-                    .dateuploaded.jqueryHide
-                      = s.uploadTime
-                    .votes.jqueryHide
-                      = s.votes
-            br
+              br
+            - else if (sIndex == 200)
+              .asdf
+                | Results clipped! Too many results, try narrowing your search.
     .span9
       .content.box-with-shadow.content-box
         #search-display
