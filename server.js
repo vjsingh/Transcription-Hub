@@ -42,7 +42,9 @@ app.configure(function(){
   app.set('db-uri', 'mongodb://localhost/' + siteConf.dbName);
   app.set('views', __dirname + '/views');
   app.set('view engine', 'jade');
-  app.set('view options', {pretty: true});
+  // set pretty to false for editable fields in transcriptionDisplay
+  // Extra whitespace added when editing AARGHHH
+  app.set('view options', {pretty: false});
   //app.set('db-uri', 'mongodb://transcriptionhub:spam1601@staff.mongohq.com:10093/jazz');
   var fileUploadDir;
   if (IS_LOCAL_MACHINE) {
@@ -1036,11 +1038,44 @@ app.get('/transcriptions/:id', function(req, res) {
 });
 
 // Edit
-app.get('/transcriptions/edit/:id.:format?', member, function(req, res) {
-  Transcription.findById(req.params.id, function(t) {
-    res.render('transcriptions/edit.jade', {
-      locals: {t : t}
-    });
+var allTranscriptionParams = ['title', 'album', 'artist', 'genre', 'instrument'];
+app.post('/transcriptions/edit/:id', member, function(req, res) {
+  console.log(req.body);
+  console.log(req.params.id);
+  var newParamType = req.body.param;
+  var newParamValue = req.body.value;
+  Transcription.findById(req.params.id, function(err, t) {
+    if (err) {
+      throw new Error(err);
+    }
+    if (t[newParamType] === newParamValue) {
+      res.json(newParamValue);
+    } else {
+      var newInfoLog = {};
+
+      // Update with current info
+      allTranscriptionParams.forEach(function(param) {
+        newInfoLog[param] = t[param];
+      });
+      // Add new info
+      newInfoLog[newParamType] = newParamValue;
+
+      // Push history state to infoLog
+      var infoLog = t.infoLog;
+      var infoLogType = infoLog[newParamType] || [];
+      var infoLogTypeUsr = infoLog[newParamType + 'Usr'] || [];
+      infoLogType.push(t[newParamType]);
+      infoLogTypeUsr.push(req.currentUser.id);
+      infoLog[newParamType] = infoLogType;
+      infoLog[newParamType + 'Usr'] = infoLogTypeUsr;
+      t.infoLogObj = infoLog;
+
+      // Update t and save
+      t[newParamType] = newParamValue;
+      t.save();
+      console.log(t);
+      res.json(newParamValue);
+    }
   });
 });
 

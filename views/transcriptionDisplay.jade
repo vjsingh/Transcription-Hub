@@ -1,3 +1,5 @@
+script(type='text/javascript', src='/lib/jeditable/js/jquery.jeditable.js')
+
 // Pass variables to javascripts
 // in a hacky way
 .jqueryHide(type='hidden', id='trId', trId=t.id)
@@ -17,17 +19,19 @@
               = t.votes
           a#downVote(title="Mediocre or Junk Transcription", href='#')
             img.downVoteImg(src='/images/arrow2.png')
-      .span9
+      .span7
         h5.trSongInfoDisplay
-          .display-title
+          #title.display-title.edit_area.edit
             = t.title
-          .display-artist
+          #artist.display-artist.edit_area.edit
             = t.artist
-          .display-album
+          #album.display-album.edit_area.edit
             = t.album
-    .display-instrument
-      | Instrument:
-      = (t.instrument || 'Not specified')
+      .span2
+        a#editTr.btn.btn-primary.btn-large Edit
+    .display-instrument.inline Instrument:
+      #instrument.edit_area.inline.edit
+        = (t.instrument || 'Not specified')
     br
     #uploadedByUsername
       | Uploaded by:
@@ -131,5 +135,16 @@ script(type='text/javascript')
     $('.close').click(function(e) {
       e.preventDefault();
       $(this).parent().hide();
+    });
+    $('#editTr').click(function(e) {
+      $('#title').click();
+    });
+    $('.edit').editable('/transcriptions/edit/' + trId, {
+      type: 'text',
+      submit: 'OK',
+      tooltip: 'Click to edit',
+      indicator: '<img src="/lib/jeditable/img/indicator.gif">',
+      cancel: 'Cancel',
+      id: 'param',
     });
   });

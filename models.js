@@ -20,6 +20,7 @@ function defineModels(mongoose, fn) {
     'genre': {type: String, index: true, 'default': 'Unknown'},
     'instrument': {type: String, index: true, 'default': 'Unknown'},
     'description': {type: String, 'default': ''},
+    'infoLogStr': {type: String, 'default': '{}'},
     'uploadTime': {type: Number},
     'uploadDateStr': {type: String},
     'fileLocation': {type: String},
@@ -29,10 +30,20 @@ function defineModels(mongoose, fn) {
     'votes': {type: Number},
     'userId': {type: ObjectId, index: true}
   });
+  // InfoLog Explained:
+  // InfoLog stores a history of all changes
+  // Its an array where each element is an obj with the state of the transcription during the last change
+  // infoLogStr is whats stored in the db, and its stringified in pre
+  // infoLogObj is what should be in the obj when saving
+  // infoLog is a convenience method that calls JSON.parse on infoLogStr
 
   Transcription.virtual('id')
     .get(function() {
       return this._id.toHexString();
+  });
+  Transcription.virtual('infoLog')
+    .get(function() {
+      return JSON.parse(this.infoLogStr);
   });
 
   function makeReadableTime(mill) {
@@ -55,6 +66,9 @@ function defineModels(mongoose, fn) {
       // string is all whitespace
       this.description = '';
     }
+
+    //Stringify info log
+    this.infoLogStr = JSON.stringify(this.infoLogObj);
     next();
   });
   /*

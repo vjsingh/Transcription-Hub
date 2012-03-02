@@ -16,3 +16,6 @@
 [submodule "public/lib/ajax-form"]
 	path = public/lib/ajax-form
 	url = https://github.com/malsup/form.git
+[submodule "public/lib/jeditable"]
+	path = public/lib/jeditable
+	url = https://github.com/tuupola/jquery_jeditable.git
