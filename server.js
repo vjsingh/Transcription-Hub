@@ -1040,8 +1040,7 @@ app.get('/transcriptions/:id', function(req, res) {
 // Edit
 var allTranscriptionParams = ['title', 'album', 'artist', 'genre', 'instrument'];
 app.post('/transcriptions/edit/:id', member, function(req, res) {
-  console.log(req.body);
-  console.log(req.params.id);
+  console.log(req.body, req.params.id, req.currentUser.username);
   var newParamType = req.body.param;
   var newParamValue = req.body.value;
   Transcription.findById(req.params.id, function(err, t) {
@@ -1073,7 +1072,6 @@ app.post('/transcriptions/edit/:id', member, function(req, res) {
       // Update t and save
       t[newParamType] = newParamValue;
       t.save();
-      console.log(t);
       res.json(newParamValue);
     }
   });
