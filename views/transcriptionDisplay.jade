@@ -130,6 +130,7 @@ script(type='text/javascript')
 
     // Resize iframe size dynamically, according to sidebar
     function resizeIframe() {
+      console.log("Resizing");
       // make content box and sidebar-nav same height
       var desiredHeight = $('#trDisplay').height();
       $('.content-box').height(desiredHeight);
@@ -153,8 +154,7 @@ script(type='text/javascript')
         comments.animate({opacity:1, height:height}, 500, function() {
           comments.height("auto"); // so it grows when more comments are added
         });
-        console.log("AAA");
-        setTimeout(resizeIframe(), 1000);
+        setTimeout(resizeIframe, 1000);
       }
     }, 100);
 
