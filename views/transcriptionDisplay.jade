@@ -1,4 +1,5 @@
 script(type='text/javascript', src='/lib/jeditable/js/jquery.jeditable.js')
+script(src="http://cachedcommons.org/javascripts/jquery/jquery.disqus.js", type="text/javascript")
 
 // Pass variables to javascripts
 // in a hacky way
@@ -184,10 +185,34 @@ script(type='text/javascript')
     var disqus_url = 'transcription/' + trId;
     var disqus_title = trTitle;
 
-    //DON'T EDIT BELOW THIS LINE
-    (function() {
-      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-      dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
-      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-    })();
+    $('#disqus_thread').disqus({
+      domain:     "transcriptionhub",
+      title:      disqus_title,
+      developer:  window.location.hostname == "localhost" ? 1 : 0,
+      show_count: true,
+      //prettify:   true,
+      //markdown:   true,
+      //iframe_css: "http://somewhere.com/stylesheets/disqus.css",
+      ready: function() {
+        // this is when your disqus comments finally load
+        console.log("Comment count: " + $.disqus.commentCount().toString());
+        console.log("Reaction count: " + $.disqus.reactionCount().toString());
+      },
+      added: function(comments) {
+        // do something with the newly added comment divs.
+      },
+      edit: function(textarea) {
+        // called when someone clicks the "reply" button.
+      }
+    });
+
+    //
+      /*
+      //DON'T EDIT BELOW THIS LINE
+      (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+      */
   });
