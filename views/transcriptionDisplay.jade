@@ -138,6 +138,7 @@ script(type='text/javascript')
       var sbHeight = $('.sidebar-nav').height();
       ((cbHeight > sbHeight) ? ($('.sidebar-nav').height(cbHeight)): $('.content-box').height(sbHeight + 35));
       $('#pdfFrame').height($('.content-box').height() - 60);
+      $('#search-results').height($('.content-box').height() * .7);
       $('#pdfFrame').width($('.trDisplay').width());
     }
     $(window).resize(function() {
