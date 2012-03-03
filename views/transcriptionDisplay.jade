@@ -144,7 +144,7 @@ script(type='text/javascript')
     })
     resizeIframe();
     var check_disqus = setInterval(function() {
-      var disqus_ready = $("#dsq-comments-title").get(0) != null;
+      var disqus_ready = $("#dsq-comments").get(0) != null;
       if (disqus_ready) {
         clearInterval(check_disqus); // remove timer
         var height = $("#disqus_thread").height();
