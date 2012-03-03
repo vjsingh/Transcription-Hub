@@ -136,13 +136,15 @@ script(type='text/javascript')
   }
 
   // Facebook
+  var initFbComments = function() {
   (function(d, s, id) {
     var js, fjs = d.getElementsByTagName(s)[0];
     if (d.getElementById(id)) return;
     js = d.createElement(s); js.id = id;
     js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&appId=278190265572756";
     fjs.parentNode.insertBefore(js, fjs);
-  }(document, 'script', 'facebook-jssdk'));
+  }(document, 'script', 'facebook-jssdk'))};
+  initFbComments();
 
   $(function() {
     var numSearchBoxes = 0;
@@ -177,6 +179,8 @@ script(type='text/javascript')
             $('.search-box').removeClass('active');
             $(buttonId).addClass('active');
             $('#search-display').html(obj.html);
+            $('#facebook-jssdk').remove();
+            initFbComments();
             var stateObj = {
               selectedButtonId: buttonId
             }
