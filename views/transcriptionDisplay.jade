@@ -46,7 +46,7 @@ script(type='text/javascript', src='/lib/jeditable/js/jquery.jeditable.js')
             = t.description
           small#trAuthor.jqueryHide
     .trComments
-      .fb-comments(data-href="http://transcription-hub.com", data-num-posts="2", data-width="340")
+      .fb-comments(data-href="http://transcription-hub.com/" + t.id, data-num-posts="2", data-width="340")
   .span6.trPdfParent
     - if (t.fileLocation)
       - pdfUrl = '/transcriptionPdf/false/' + t.fileLocation
