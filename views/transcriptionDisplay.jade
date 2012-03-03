@@ -136,7 +136,7 @@ script(type='text/javascript')
       $('.content-box').height(desiredHeight);
       var cbHeight = $('.content-box').height();
       var sbHeight = $('.sidebar-nav').height();
-      ((cbHeight > sbHeight) ? ($('.sidebar-nav').height($('.content-box').height() + 35)): $('.content-box').height($('.sidebar-nav').height() + 35));
+      ((cbHeight > sbHeight) ? ($('.sidebar-nav').height(cbHeight)): $('.content-box').height(sbHeight + 35));
       $('#pdfFrame').height($('.content-box').height() - 60);
       $('#pdfFrame').width($('.trDisplay').width());
     }
