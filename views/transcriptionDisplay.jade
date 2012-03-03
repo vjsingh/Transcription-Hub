@@ -131,7 +131,9 @@ script(type='text/javascript')
     // Resize iframe size dynamically, according to sidebar
     function resizeIframe() {
       // make content box and sidebar-nav same height
-      var cbHeight = $('#trDisplay').height();
+      var desiredHeight = $('#trDisplay').height();
+      $('.content-box.').height(desiredHeight);
+      var cbHeight = $('.content-box').height();
       var sbHeight = $('.sidebar-nav').height();
       ((cbHeight > sbHeight) ? ($('.sidebar-nav').height($('.content-box').height() + 35)): $('.content-box').height($('.sidebar-nav').height() + 35));
       $('#pdfFrame').height($('.content-box').height() - 60);
