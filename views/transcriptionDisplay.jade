@@ -6,7 +6,7 @@ script(type='text/javascript', src='/lib/jeditable/js/jquery.jeditable.js')
 .jqueryHide(type='hidden', id='trTitle', trTitle=t.title)
 
 .row-fluid
-  .span6.trDisplay
+  #trDisplay.span6.trDisplay
     #ownTranscription.alert.alert-error.fade.in.jqueryHide
       a.close(data-dismiss='alert', href='#') x
       Strong Can't vote on your own transcriptions!
@@ -131,7 +131,7 @@ script(type='text/javascript')
     // Resize iframe size dynamically, according to sidebar
     function resizeIframe() {
       // make content box and sidebar-nav same height
-      var cbHeight = $('.content-box').height();
+      var cbHeight = $('#trDisplay').height();
       var sbHeight = $('.sidebar-nav').height();
       ((cbHeight > sbHeight) ? ($('.sidebar-nav').height($('.content-box').height() + 35)): $('.content-box').height($('.sidebar-nav').height() + 35));
       $('#pdfFrame').height($('.content-box').height() - 60);
