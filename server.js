@@ -1106,7 +1106,14 @@ app.put('/transcriptions/:id.:format?', updateOrDel('save'));
 app.del('/transcriptions/:id.:format?', updateOrDel('delete'));
 
 // Search
+app.post('/search', function(req, res) {
+  var search = req.body.search;
+  doSearch(req, res, search);
+});
 app.get('/search', function(req, res) {
+  var search = req.query.search;
+  doSearch(req, res, search);
+  /*
   res.render('transcriptions', {
     locals: {
       searchItems: [],
@@ -1114,6 +1121,7 @@ app.get('/search', function(req, res) {
       type: 'transcriptions'
     }
   });
+  */
 });
 app.get('/browse', function(req, res) {
   res.render('browse', {
@@ -1245,10 +1253,6 @@ function doSearch(req, res, search) {
     }
   }
 }
-app.post('/search', function(req, res) {
-  var search = req.body.search;
-  doSearch(req, res, search);
-});
 app.get('/searchParam', function(req, res) {
   var searchObj = {
     title: '',
