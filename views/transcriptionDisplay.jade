@@ -130,7 +130,10 @@ script(type='text/javascript')
 
     // Resize iframe size dynamically, according to sidebar
     function resizeIframe() {
-      $('.content-box').height($('.sidebar-nav').height() + 35);
+      // make content box and sidebar-nav same height
+      var cbHeight = $('.content-box').height();
+      var sbHeight = $('.sidebar-nav').height();
+      ((cbHeight > sbHeight) ? ($('.sidebar-nav').height($('.content-box').height() + 35)): $('.content-box').height($('.sidebar-nav').height() + 35));
       $('#pdfFrame').height($('.content-box').height() - 60);
       $('#pdfFrame').width($('.trDisplay').width());
     }
@@ -138,6 +141,19 @@ script(type='text/javascript')
       resizeIframe();
     })
     resizeIframe();
+    var check_disqus = setInterval(function() {
+      var disqus_ready = $("#dsq-comments-title").get(0) != null;
+      if (disqus_ready) {
+        clearInterval(check_disqus); // remove timer
+        var height = $("#disqus_thread").height();
+        var comments = $("#disqus_thread");
+        comments.height(0).css({display:"block", opacity:0}); // was "display: none"
+        comments.animate({opacity:1, height:height}, 500, function() {
+          comments.height("auto"); // so it grows when more comments are added
+        });
+        resizeIframe();
+      }
+    }, 100);
 
     // Hide instead of closing on close
     $('.close').click(function(e) {
@@ -157,7 +173,7 @@ script(type='text/javascript')
     });
     //CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE
     var disqus_shortname = 'transcriptionhub'; // required: replace example with your forum shortname
-    //var disqus_developer = 1; // for testing locally
+    var disqus_developer = 1; // for testing locally
     var disqus_identifier = 'transcription/' + trId;
     var disqus_title = trTitle;
 
