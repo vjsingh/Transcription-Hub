@@ -971,51 +971,74 @@ app.get('/getBounty/:id', function(req, res) {
 // Browse
 var browseDisplayTemple = makeTemplate('browseDisplay');
 app.get('/browse/:browseType', function(req, res) {
-  Transcription.distinct(req.params.browseType, {}, function(err, docs) {
-    if (err) {
-      throw new Error(err);
+  var browseType = req.params.browseType;
+  var gotResults = function(browseItems) {
+    //if (req.params.format === 'json') {
+    var html = browseDisplayTemple({
+      browseItems: browseItems
+    });
+    res.json({
+    //url: '/browse/' + req.params.browseType + '.html',
+        url: '/browse/',
+        html: html
+      });
+    /*
+    } else {
+      res.render('browseDisplay', {
+        browseItems: agg
+      });
     }
-    function getCounts(fieldName, fields, agg) {
-      if (fields.length === 0) {
-        agg.sort(function(a, b) {
-          return b.count - a.count;
+    */
+  };
+  if (browseType === 'latest') {
+    Transcription.find()
+      .sort('uploadTime', -1)
+      .execFind(function(err, trs) {
+        if (err) {
+          throw new Error(err);
+        }
+        var returnObjs = [];
+        // duplicated below :(
+        trs.forEach(function(tr) {
+          var returnObj = {};
+          returnObj.value = tr.artist + ' - ' + tr.title;
+          returnObj.url = '/transcriptions/' + tr.id;
+          returnObjs.push(returnObj);
         });
-        //if (req.params.format === 'json') {
-          var html = browseDisplayTemple({
-            browseItems: agg
+        gotResults(returnObjs);
+      });
+  } else {
+    Transcription.distinct(req.params.browseType, {}, function(err, docs) {
+      if (err) {
+        throw new Error(err);
+      }
+      function getCounts(fieldName, fields, agg) {
+        if (fields.length === 0) {
+          agg.sort(function(a, b) {
+            return b.count - a.count;
           });
-          res.json({
-            //url: '/browse/' + req.params.browseType + '.html',
-            url: '/browse/',
-            html: html
-          });
-        /*
+          gotResults(agg);
         } else {
-          res.render('browseDisplay', {
-            browseItems: agg
+          var obj = {};
+          var fieldVal = fields[0];
+          obj[fieldName] = fieldVal;
+          Transcription.count(obj, function(err, count) {
+            if (err) {
+              throw new Error(err);
+            }
+            var returnObj = {};
+            returnObj.value = fieldVal;
+            returnObj.count = count;
+            returnObj.url = '/searchParam/?' + fieldName + '=' + fieldVal;
+            agg.push(returnObj);
+            fields.splice(0, 1);
+            getCounts(fieldName, fields, agg);
           });
         }
-        */
-      } else {
-        var obj = {};
-        var fieldVal = fields[0];
-        obj[fieldName] = fieldVal;
-        Transcription.count(obj, function(err, count) {
-          if (err) {
-            throw new Error(err);
-          }
-          var returnObj = {};
-          returnObj.value = fieldVal;
-          returnObj.count = count;
-          returnObj.url = '/searchParam/?' + fieldName + '=' + fieldVal;
-          agg.push(returnObj);
-          fields.splice(0, 1);
-          getCounts(fieldName, fields, agg);
-        });
       }
-    }
-    getCounts(req.params.browseType, docs, []);
-  });
+      getCounts(req.params.browseType, docs, []);
+    });
+  }
 });
 
 app.post('/transcriptions/:id', function(req, res) {

@@ -8,4 +8,5 @@
         br
         a(href=s.url)
           = s.value
-          | &nbsp(#{s.count})
+          - if (typeof(s.count) !== 'undefined' && s.count)
+            | &nbsp(#{s.count})
