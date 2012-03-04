@@ -35,6 +35,10 @@ script(src="http://cachedcommons.org/javascripts/jquery/jquery.disqus.js", type=
       #instrument.edit_area.inline.edit
         = (t.instrument || 'Not specified')
     br
+    .display-genre.inline Genre:
+      #genre.edit_area.inline.edit
+        = (t.genre || 'Not specified')
+    br
     #uploadedByUsername
       | Uploaded by:
       a#uploadedByUsernameLink.jqueryHide(userId=t.userId, href='#')
