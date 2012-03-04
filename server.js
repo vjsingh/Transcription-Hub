@@ -1112,16 +1112,17 @@ app.post('/search', function(req, res) {
 });
 app.get('/search', function(req, res) {
   var search = req.query.search;
-  doSearch(req, res, search);
-  /*
-  res.render('transcriptions', {
-    locals: {
-      searchItems: [],
-      search: {},
-      type: 'transcriptions'
-    }
-  });
-  */
+  if (search && search.type) {
+    doSearch(req, res, search);
+  } else {
+    res.render('transcriptions', {
+      locals: {
+        searchItems: [],
+        search: {},
+        type: 'transcriptions'
+      }
+    });
+  }
 });
 app.get('/browse', function(req, res) {
   res.render('browse', {
