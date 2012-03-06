@@ -665,7 +665,7 @@ app.get('/transcriptionPdf/:download/:fileLoc', function(req, res) {
         res.end(pdfData, 'binary');
       });
     } else {
-      throw new Error("Couldn't find Pdf");
+      throw new Error("Couldn't find Pdf " + fileLoc);
     }
   });
 });
