@@ -1269,7 +1269,7 @@ function doSearch(req, res, search) {
     } else {
       search = makeReg(search);
       type
-        .$where('(' + search + ').test(this.title + this.artist + this.album)')
+        .$where('(' + search + ').test(this.title + this.artist + this.album + this.instrument)')
           //' || (' + search + ').test(this.artist)' +
           //' || (' + search + ').test(this.album)')
         .sort('votes', -1)
