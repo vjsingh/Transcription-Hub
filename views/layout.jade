@@ -101,7 +101,7 @@ html(class='no-js', lang='en')
               //a.button.btn.primary.pull-left(href="/register") Register
               form.navbar-search.pull-left(method='get', action='/search')
                 input#searchType.jqueryHide(type='text', name='search[type]', value='transcriptions')
-                input.search-query(type='text', name='search[omniSearch]', placeholder='Enter Artist/Song/Album')
+                input.search-query(type='text', name='search[omniSearch]', placeholder='Enter Artist/Song/Album/Instrument')
                 input(type='submit', style='position: absolute; left: -9999px;') // hide submit button
               .pull-right.navbar-text
                 - if (userLoggedIn)
