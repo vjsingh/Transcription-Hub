@@ -117,12 +117,16 @@ html(class='no-js', lang='en')
         != body
       #footer
         .inner.container-fluid
-          | Built with Node.js, Express, and MongoDB.
-          a#footerFeedback(href='#') Feedback & Support
-          | &nbsp
-          a#footerPrivacy(href='/privacy') Privacy Policy
-          br
-          &copy; 2012 Varun Singh
+          .row-fluid
+            .span6
+              | Built with Node.js, Express, and MongoDB.
+              a#footerFeedback(href='#') Feedback & Support
+              | &nbsp
+              a#footerPrivacy(href='/privacy') Privacy Policy
+              br.inline
+              &copy; 2012 Varun Singh
+              #fork.inline
+                iframe(src="http://markdotto.github.com/github-buttons/github-btn.html?user=vjsingh&repo=Transcription-Hub&type=fork", allowtransparency="true", frameborder="0", scrolling="0", width="53px", height="20px", size='large')
     script(type="text/javascript")
       var _gaq = _gaq || [];
       _gaq.push(['_setAccount', 'UA-28499152-1']);
