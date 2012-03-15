@@ -448,6 +448,9 @@ app.post('/register', function(req, res) {
 })();
 
 app.get('/checkPoints/', function(req, res) {
+  if (!req.currentUser) {
+    res.write('false');
+  }
   if (!req.query || !req.query.bounty || !req.query.bounty.points) {
     res.write('true');
     res.end();
