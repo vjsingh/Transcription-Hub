@@ -75,6 +75,7 @@ html(class='no-js', lang='en')
     <script type="text/javascript">try{Typekit.load();}catch(e){}</script>
     | <link rel="stylesheet" type="text/css" href="//webputty.commondatastorage.googleapis.com/agtzfmNzc2ZpZGRsZXIMCxIEUGFnZRjM7EQM.css" />
     | <script type="text/javascript">(function(w,d){if(w.location!=w.parent.location||w.location.search.indexOf('__preview_css__')>-1){var t=d.createElement('script');t.type='text/javascript';t.async=true;t.src='http://www.webputty.net/js/agtzfmNzc2ZpZGRsZXIMCxIEUGFnZRjM7EQM';(d.body||d.documentElement).appendChild(t);}})(window,document);</script>
+
   body
     <div id="fb-root"></div>
     #entire-page
@@ -120,11 +121,27 @@ html(class='no-js', lang='en')
       #footer
         .inner.container-fluid
           .row-fluid
-            .span6
+            .span8
               | Built with Node.js, Express, and MongoDB.
               a#footerFeedback(href='#') Feedback & Support
               | &nbsp
               a#footerPrivacy(href='/privacy') Privacy Policy
+              //
+                | <span class='st_email_hcount' displayText='Email'></span>
+                | <span class='st_facebook_hcount' displayText='Facebook'></span>
+                | <span class='st_twitter_hcount' displayText='Tweet'></span>
+                | <span class='st_googleplus_hcount' displayText='Google +1'></span>
+              <!-- AddThis Button BEGIN -->
+              <div class="addthis_toolbox addthis_default_style pull-right">
+              <a class="addthis_button_preferred_1"></a>
+              <a class="addthis_button_preferred_2"></a>
+              <a class="addthis_button_preferred_3"></a>
+              <a class="addthis_button_preferred_4"></a>
+              <a class="addthis_button_compact"></a>
+              <a class="addthis_counter addthis_bubble_style"></a>
+              </div>
+              <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid=ra-4f7f42115ff2f684"></script>
+              <!-- AddThis Button END -->
               br.inline
               &copy; 2012 Varun Singh
               #fork.inline
