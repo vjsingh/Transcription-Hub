@@ -12,6 +12,11 @@ function defineModels(mongoose, fn) {
     return v;
   }
 
+  Application = new Schema({
+    'name': {type: String, index: true, 'default': 'app'},
+    'downloads': {type: Number, 'default': 0},
+  });
+
   // Model: Transcription
   Transcription = new Schema({
     'title': {type: String, index: true, 'default': 'Unknown'},
@@ -230,6 +235,7 @@ function defineModels(mongoose, fn) {
   mongoose.model('User', User);
   mongoose.model('LoginToken', LoginToken);
   mongoose.model('Bounty', Bounty);
+  mongoose.model('Application', Application);
 
   fn();
 }

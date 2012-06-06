@@ -16,7 +16,7 @@ var express = require('express'),
   fs = require('fs'),
   path = require('path'),
   db,
-  Transcription, User, LoginToken, Bounty;
+  Transcription, User, LoginToken, Bounty, Application;
   //routes = require('./routes')
 
 var sys = require('util');
@@ -134,6 +134,7 @@ models.defineModels(mongoose, function() {
     app.User = User = mongoose.model('User');
     app.LoginToken = LoginToken = mongoose.model('LoginToken');
     app.Bounty = Bounty = mongoose.model('Bounty');
+    app.Application = Application = mongoose.model('Application');
     db = mongoose.connect(app.set('db-uri'));
 });
 
@@ -656,6 +657,12 @@ app.get('/transcriptionPdf/:download/:fileLoc', function(req, res) {
   path.exists(fileLoc, function(exists) {
     if (exists) {
       if (download) {
+        Application.findOne({name: 'app'}, function(err, app) {
+            if (app) {
+                app.downloads = app.downloads + 1;
+                app.save();
+            }
+        });
         res.writeHead(200);
       } else {
         res.writeHead(200, {'Content-Type': 'application/pdf'});
@@ -1333,4 +1340,10 @@ User.find({}, function(err, users) {
       user.save();
     }
   });
+});
+Application.find({}, function(err, apps) {
+  if (apps.length === 0) {
+    var a = new Application();
+    a.save();
+  }
 });
