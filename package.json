@@ -1,7 +1,7 @@
 {
   "name": "transcription-hub",
   "description": "One stop place for all jazz solo transcriptions",
-  "version": "0.0.1-1",
+  "version": "0.0.1-7",
   "author": "Varun Singh <Varun_Singh@brown.edu>",
   "scripts": {
     "start": "startjitsu"
