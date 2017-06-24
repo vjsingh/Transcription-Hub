@@ -11,5 +11,10 @@ $(document).ready(function() {
         UserVoice.showPopupWidget(uvOptions);
       });
     })();
+
+    // donation x button
+    $('.donation-x').click(function() {
+        $('.donation-header').hide();
+    });
 });
 
