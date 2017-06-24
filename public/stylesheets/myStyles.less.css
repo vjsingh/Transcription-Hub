@@ -304,6 +304,7 @@ body {
   display: inline-block;
   line-height: normal;
   font-size: 16px;
+  max-width: 1060px;
 }
 .donation-x {
   position: absolute;
