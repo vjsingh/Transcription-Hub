@@ -285,6 +285,33 @@ body {
   left: 20px;
 }
 .donation-header {
-  height: 50px;
+  height: 140px;
   width: 100%;
+  text-align: center;
+  line-height: 80px;
+  display: block;
+  background: #ff68cd;
+}
+.donation-top {
+  height: 80px;
+  width: 100%;
+  text-align: center;
+  line-height: 80px;
+}
+.donation-text {
+  padding: 0px 50px;
+  vertical-align: middle;
+  display: inline-block;
+  line-height: normal;
+  font-size: 16px;
+}
+.donation-x {
+  position: absolute;
+  right: 10px;
+  top: -18px;
+  font-size: 30px;
+}
+.donation-bottom {
+  position: relative;
+  bottom: 48px;
 }
