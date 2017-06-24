@@ -284,3 +284,7 @@ body {
   top: 10px;
   left: 20px;
 }
+.donation-header {
+  height: 300px;
+  width: 100%;
+}
