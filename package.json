@@ -26,7 +26,7 @@
     "connect-mongo": "0.1.x",
     "ua-parser": "0.2.x",
     "watch-less": "0.0.x",
-    "jquery": "1.6.x"
+    "jquery": "3.4.x"
   },
   "subdomain": "jazz"
 }
