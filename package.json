@@ -15,7 +15,7 @@
   },
   "dependencies": {
     "less": "1.1.x",
-    "mongoose": "2.4.x",
+    "mongoose": "5.8.x",
     "stylus": "0.21.x",
     "jade": "0.20.x",
     "connect-mongodb": "1.1.x",
